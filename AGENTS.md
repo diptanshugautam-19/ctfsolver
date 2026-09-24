@@ -19,8 +19,11 @@
   `
 - Also output structured audit records into solutions/audit_log.jsonl per tool invocation.
 - Verify before reporting: flag matches a known regex AND decodes to meaningful printable content.
-- One challenge per subdirectory in challenges/ and solutions/; never pollute tools/.
-- Continuous Learning & Memory: Consult TECHNIQUES_MEMORY.md at triage for matching patterns. After solving any challenge, append newly discovered techniques, formulas, or pitfalls into TECHNIQUES_MEMORY.md.
+- Continuous Learning & Memory (Mandatory on Every Session):
+  - **Triage:** Always consult `TECHNIQUES_MEMORY.md` and `writeups.db` first.
+  - **Post-Solve:** After solving any challenge or discovering a novel vector, immediately append the technique, formula, or pitfall into `TECHNIQUES_MEMORY.md`.
+  - **Indexing:** Automatically re-index any new writeup, contract, or exploit script into `writeups.db` (`python tools/writeup_search.py --index`).
+  - **Auto-Commit:** Create a local Git snapshot of updated memory files, rules, and database so changes are permanently saved and never lost.
 
 ## Scope & Sandboxing
 - Attack ONLY challenge infrastructure authorized in scope.yaml or explicit challenge parameters.
