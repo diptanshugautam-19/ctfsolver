@@ -35,9 +35,9 @@
 
 ## Pre-Built Tool Suite & Execution Protocol
 Any AI working in this workspace must use these pre-built deterministic tools rather than mental guessing or hallucination:
-1. **Local RAG Writeup Database (1,650+ writeups & exploits):**
+1. **Local RAG Writeup Database (3,520+ writeups, contracts & exploits):**
    - Command: `python tools/writeup_search.py "<keywords>" --code`
-   - Use at Step 1 of triage to retrieve past solutions, exploit code blocks, and techniques.
+   - Use at Step 1 of triage to retrieve past solutions, exploit code blocks (.py, .sol, .sh), and techniques.
 2. **Recursive Multi-Layer Cipher Decoder:**
    - Command: `python tools/auto_decode.py "<ciphertext>" --xor`
    - Automatically cracks nested encodings (Hex, Base64/32/85, Binary, Decimal, URL, Morse, Bacon, ROT1-25, single-byte XOR).
@@ -52,4 +52,7 @@ Any AI working in this workspace must use these pre-built deterministic tools ra
    - Automated SMT constraint solving for ASCII validation logic.
 6. **Crypto Attack Suite:**
    - Script: `tools/crypto_toolkit.py` (Wiener, Fermat, small-e, Hastad, Common Modulus, DLP, Factordb).
+7. **Binary Exploitation Libraries & MCP Bridge:**
+   - Libraries: `pwntools` and `ptrlib` installed and ready.
+   - Live IDA Pro bridge: `tools/pcm` (MCP server for Hex-Rays decompiler, basic block graphs, and IDAPython).
 

@@ -91,3 +91,13 @@ Hard challenges intentionally resist trivial attacks. Follow the **4-Tier Escala
 - Network: `tools/pcap_helper.py` stream reassembly & HTTP decompression $\to$ dynamic re-triage of all carved files.
 - Memory: Volatility3 plugin chaining (`windows.pslist`, `windows.filescan`, `windows.dumpfiles`).
 - Git: Repository log/reflog recovery for committed secrets.
+
+### Web3 & Blockchain
+- Frameworks: Foundry (`forge test`), Hardhat, web3.py, eth-account.
+- Automated Testing: Scaffold exploit tests in `test/` or `script/` using Foundry cheats (`vm.prank`, `vm.deal`, `vm.warp`).
+- Core Attack Vectors:
+  - Reentrancy: State modification occurring after external `.call{value: ...}("")`.
+  - `delegatecall` Storage Collisions: Context-preserving execution corrupting state variables.
+  - Flash Loans & Price Oracle Manipulation: Manipulating liquidity pools before token swaps.
+  - Selfdestruct Force-Feeding: Bypassing strict contract balance checks (`address(this).balance`).
+  - Compiler / ABI Decoding CVEs: Check Vyper/Solc versions against known vulnerabilities.

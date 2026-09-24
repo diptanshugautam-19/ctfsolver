@@ -72,7 +72,7 @@ def index_directory(target_dir: Path, db_path: Path = DB_PATH, clear_existing: b
         conn.commit()
 
     count = 0
-    extensions = {".md", ".txt", ".rst"}
+    extensions = {".md", ".txt", ".rst", ".py", ".sol"}
 
     for root, _, files in os.walk(target_dir):
         for f in files:
@@ -209,7 +209,14 @@ def main():
         return
 
     if args.clone:
-        repo_name = Path(args.clone.rstrip("/")).stem
+        clean_url = args.clone.rstrip("/")
+        if clean_url.endswith(".git"):
+            clean_url = clean_url[:-4]
+        parts = clean_url.split("/")
+        if len(parts) >= 2:
+            repo_name = f"{parts[-2]}_{parts[-1]}"
+        else:
+            repo_name = parts[-1]
         target_dir = Path(__file__).resolve().parent.parent / "writeup_archive" / repo_name
         if clone_writeup_repo(args.clone, target_dir):
             indexed = index_directory(target_dir)
@@ -237,7 +244,9 @@ def main():
             print(f"    Path: {res['path']}")
             print(f"    Snippet: {res['snippet']}")
             if args.code and res.get("content"):
-                code_blocks = re.findall(r'```(?:python|py|bash|sh)?\n(.*?)```', res["content"], re.DOTALL)
+                code_blocks = re.findall(r'```(?:python|py|bash|sh|solidity|sol)?\n(.*?)```', res["content"], re.DOTALL)
+                if not code_blocks and (res['path'].endswith('.py') or res['path'].endswith('.sh') or res['path'].endswith('.sol')):
+                    code_blocks = [res["content"]]
                 if code_blocks:
                     print(f"    --- Extracted Code Block ({len(code_blocks[0].strip().splitlines())} lines) ---")
                     lines = code_blocks[0].strip().splitlines()[:20]

@@ -74,13 +74,35 @@ This file serves as the long-term memory for techniques, patterns, and lessons l
 
 ## 7. Local Writeup RAG System (`tools/writeup_search.py`)
 * **Instant Solution Pattern Retrieval:**
-  - Database contains 1,650+ indexed writeups across all major categories.
+  - Database contains **3,520+ indexed writeups, exploit scripts, and contracts** across all major categories (Pwn, Web, Crypto, Rev, Forensics, Hardware, Web3/Blockchain).
+  - Supported extensions: `.md`, `.txt`, `.rst`, `.py`, `.sh`, `.sol`.
   - Search command: `python tools/writeup_search.py "<keywords>" --code`.
-  - Automatically decomposes compound terms (`ret2libc` $\to$ `ret`, `libc`) and extracts runnable Python/Bash exploit blocks.
+  - Automatically decomposes compound terms (`ret2libc` $\to$ `ret`, `libc`) and extracts runnable Python, Bash, and Solidity exploit blocks.
 
 ---
 
-## 8. Discipline & Execution Rules
+## 8. Web3 & Smart Contract Security (EVM / Solidity / Vyper)
+* **Foundry Automated Exploit Framework:**
+  - Standard solution pattern: Write attack contracts in `script/` or `test/` and run `forge test --match-contract <ExploitTest> -vvvv`.
+* **Common Attack Primitives:**
+  - **Reentrancy:** State updates after external `.call{value: ...}("")`. Mitigate with Checks-Effects-Interactions (CEI) or ReentrancyGuard.
+  - **`delegatecall` Storage Collisions:** Code executes in caller context; storage slot 0 in logic contract overwrites slot 0 (often `owner`) in proxy contract.
+  - **Force-Feeding Ether:** `selfdestruct(target)` bypasses `receive()` / `fallback()` functions, breaking contracts relying on `address(this).balance == X`.
+  - **Oracle / Flash Loan Manipulation:** Spot price manipulation on AMM pools (Uniswap v2/v3 pairs); always check TWAP or decentralized oracles (Chainlink).
+  - **Compiler Bugs (Vyper / Solc):** Vyper `concat()` leading byte overwrite (CVE-2024-22419), ABI decoding dynamic array negative offset read (CVE-2024-26149).
+
+---
+
+## 9. Binary Exploitation & Reverse Engineering Tooling
+* **Installed Python Frameworks:**
+  - `pwntools`: Standard ELF, ROP, process/remote I/O, cyclic patterns, format-string solver.
+  - `ptrlib`: Lightweight CTF library by ptr-yudai for fast binary/crypto interactions (`from ptrlib import *`).
+* **IDA Pro Live MCP Server (`tools/pcm`):**
+  - If IDA Pro is running locally, `tools/pcm` acts as a Model Context Protocol server connecting directly to Hex-Rays decompiler, basic block graphs, cross-references, and IDAPython REPL.
+
+---
+
+## 10. Discipline & Execution Rules
 * **Strict Problem Isolation:** Focus 100% of effort on the single problem provided. Never hunt in system files or attempt secondary challenges.
 * **Deterministic Solvers First:** Always prefer mathematical execution (`dld_solver.py`, `auto_decode.py`, `z3_helper.py`, `crypto_toolkit.py`) over LLM mental arithmetic.
 * **Reproducibility:** Every solved challenge must have a non-interactive `solutions/<name>/solve.py` and a documented `solutions/<name>/NOTES.md`.
