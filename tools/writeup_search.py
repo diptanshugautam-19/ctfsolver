@@ -72,15 +72,23 @@ def index_directory(target_dir: Path, db_path: Path = DB_PATH, clear_existing: b
         conn.commit()
 
     count = 0
-    extensions = {".md", ".txt", ".rst", ".py", ".sol"}
+    extensions = {".md", ".txt", ".rst", ".py", ".sol", ".pdf"}
 
     for root, _, files in os.walk(target_dir):
         for f in files:
             p = Path(root) / f
             if p.suffix.lower() in extensions:
                 try:
-                    with open(p, "r", encoding="utf-8", errors="ignore") as fp:
-                        content = fp.read()
+                    if p.suffix.lower() == ".pdf":
+                        try:
+                            import pypdf
+                            reader = pypdf.PdfReader(str(p))
+                            content = "\n".join(page.extract_text() or "" for page in reader.pages)
+                        except Exception:
+                            continue
+                    else:
+                        with open(p, "r", encoding="utf-8", errors="ignore") as fp:
+                            content = fp.read()
                     
                     if len(content.strip()) < 20:
                         continue
