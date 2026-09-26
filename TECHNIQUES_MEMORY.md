@@ -74,8 +74,8 @@ This file serves as the long-term memory for techniques, patterns, and lessons l
 
 ## 7. Local Writeup RAG System (`tools/writeup_search.py`)
 * **Instant Solution Pattern Retrieval:**
-  - Database contains **3,520+ indexed writeups, exploit scripts, and contracts** across all major categories (Pwn, Web, Crypto, Rev, Forensics, Hardware, Web3/Blockchain).
-  - Supported extensions: `.md`, `.txt`, `.rst`, `.py`, `.sh`, `.sol`.
+  - Database contains **4,240+ indexed writeups, exploit scripts, contracts, and hardware sources** across all major categories (Hardware, Pwn, Web, Crypto, Rev, Forensics, Web3/Blockchain).
+  - Supported extensions: `.md`, `.txt`, `.rst`, `.py`, `.sh`, `.sol`, `.pdf`, `.ino`, `.c`, `.cpp`, `.h`, `.v`, `.sv`, `.vhd`.
   - Search command: `python tools/writeup_search.py "<keywords>" --code`.
   - Automatically decomposes compound terms (`ret2libc` $\to$ `ret`, `libc`) and extracts runnable Python, Bash, and Solidity exploit blocks.
 
@@ -109,3 +109,29 @@ This file serves as the long-term memory for techniques, patterns, and lessons l
 * **Strict Problem Isolation:** Focus 100% of effort on the single problem provided. Never hunt in system files or attempt secondary challenges.
 * **Deterministic Solvers First:** Always prefer mathematical execution (`dld_solver.py`, `auto_decode.py`, `z3_helper.py`, `crypto_toolkit.py`) over LLM mental arithmetic.
 * **Reproducibility:** Every solved challenge must have a non-interactive `solutions/<name>/solve.py` and a documented `solutions/<name>/NOTES.md`.
+
+---
+
+## 11. Hardware, IoT & Embedded Security
+* **Serial & Bus Protocols:**
+  - **UART:** Asynchronous serial (TX/RX, GND). Framing: Start bit (0), 5-9 data bits (usually 8 LSB-first), optional parity bit, 1-2 stop bits (1). Baud rate detection: measure shortest pulse width $\Delta t$, Baud $\approx 1/\Delta t$ (common: 9600, 19200, 38400, 57600, 115200).
+  - **I2C:** Synchronous 2-wire serial (SDA data, SCL clock, pull-up resistors). Addressing: 7-bit or 10-bit address + R/W bit (0=Write, 1=Read), followed by ACK (0) / NACK (1).
+  - **SPI:** Synchronous 4-wire serial (MOSI, MISO, SCK, CS/SS active low). Clock polarity (CPOL) and phase (CPHA) determine sampling edges (Modes 0 to 3).
+  - **JTAG / SWD:** IEEE 1149.1 test access port (TMS, TCK, TDI, TDO, TRST) and ARM Serial Wire Debug (SWDIO, SWCLK). Used for hardware debugging, boundary scans, reading device IDs (`IDCODE`), dumping internal flash/SRAM, and runtime memory patching.
+  - **Wiegand Protocol:** Access control cards and keypads. 2-wire interface (DATA0 / Green, DATA1 / White). Falling edge on DATA0 = bit 0, DATA1 = bit 1. Formats: 26-bit standard (leading even parity, 8-bit facility code, 16-bit card ID, trailing odd parity), 4-bit / 8-bit BCD per keypress. Decode with PulseView / Sigrok or transition timestamp analysis.
+  - **CAN Bus:** Differential signaling (CAN-H, CAN-L, 120$\Omega$ termination). 11-bit standard or 29-bit extended ID, RTR bit, DLC (0-8 bytes), CRC, ACK. Common tools: `can-utils` (`candump`, `cansend`, `canplayer`).
+* **Logic Analyzers & Waveform Forensics:**
+  - Tools: Saleae Logic 2 (`.sal`), Sigrok / PulseView (`.sr`, `.vcd`, `.csv`).
+  - Waveform parsing: Convert VCD (Value Change Dump) or CSV timestamped transitions to digital state streams using Python (`vcdvcd` or regex transition finders).
+* **Firmware Extraction & Analysis:**
+  - **Flash Memory Dumping:** SPI Flash chips (Winbond W25Qxx, etc.) dumped via Bus Pirate, TeensyPirate, CH341A programmer, or flashrom (`flashrom -p ch341a_spi -r dump.bin`).
+  - **Firmware Inspection:** `binwalk -Me firmware.bin` (carve SquashFS, CramFS, JFFS2, UBI, raw Linux kernels).
+  - **Microcontroller Architectures:** ARM (Thumb/ARM mode), MIPS (MIPS32/64, Big/Little endian - check opcode `0x03e00008` `jr $ra`), RISC-V (RV32I/RV64I, CH32V003), AVR (ATmega328P/Arduino).
+  - **Emulation:** QEMU user space (`qemu-arm-static`, `qemu-mips-static`, `qemu-riscv32-static`).
+* **Fault Injection & Side-Channel Analysis (SCA):**
+  - **Power Analysis:** Simple Power Analysis (SPA) & Correlation Power Analysis (CPA) targeting AES S-Box substitutions ($H(k) = HW(SBOX(p \oplus k))$) or RSA modular exponentiation (square-and-multiply leakage).
+  - **Clock & Voltage Glitching:** Crowbar circuits (MOSFET pulling $V_{CC}$ to ground for nanoseconds) targeting clock cycles during loop count comparisons (`BNE`/`BEQ`) or password checking routines to flip instruction branches or bypass signature checks.
+  - Multitools: ChipWhisperer, CuriousBolt, Facedancer.
+* **Wireless & RF Protocols:**
+  - **Bluetooth Low Energy (BLE):** GATT profile, Services, Characteristics, Descriptors. Enumeration via `bleah`, `gatttool -b <MAC> -I`, `bluetoothctl`, or Python `bleak`. Attack vectors: unauthenticated read/write characteristics, replay of authorization handles.
+  - **SDR / Sub-GHz RF:** RTL-SDR, HackRF, GNU Radio, URH (Universal Radio Hacker), Inspectrum. Modulations: AM/ASK, OOK (On-Off Keying for rolling codes/garage doors), FM/FSK, PSK.

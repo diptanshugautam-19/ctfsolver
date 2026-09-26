@@ -44,9 +44,9 @@ def extract_metadata(file_path: Path, text: str) -> Dict[str, str]:
 
     # Infer category from path
     path_lower = str(file_path).lower()
-    for cat in ["crypto", "pwn", "rev", "web", "forensics", "misc", "osint", "dld"]:
+    for cat in ["crypto", "pwn", "rev", "web", "forensics", "misc", "osint", "dld", "hardware", "iot", "rf", "radio", "ics", "firmware"]:
         if f"/{cat}" in path_lower or f"\\{cat}" in path_lower or cat in path_lower:
-            category = cat
+            category = "hardware" if cat in ["rf", "radio", "ics", "firmware", "iot"] else cat
             break
 
     # Look for first Markdown heading
@@ -72,7 +72,7 @@ def index_directory(target_dir: Path, db_path: Path = DB_PATH, clear_existing: b
         conn.commit()
 
     count = 0
-    extensions = {".md", ".txt", ".rst", ".py", ".sol", ".pdf"}
+    extensions = {".md", ".txt", ".rst", ".py", ".sol", ".pdf", ".ino", ".c", ".cpp", ".h", ".v", ".sv", ".vhd"}
 
     for root, _, files in os.walk(target_dir):
         for f in files:
