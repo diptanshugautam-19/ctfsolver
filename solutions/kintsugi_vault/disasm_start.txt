@@ -1,0 +1,177 @@
+0000: LOAD_KEY r0, key[0]
+0003: LOAD_KEY r1, key[1]
+0006: LOAD_KEY r2, key[2]
+0009: LOAD_KEY r3, key[3]
+000c: LOAD_KEY r4, key[4]
+000f: LOAD_KEY r5, key[5]
+0012: LOAD_KEY r6, key[6]
+0015: LOAD_KEY r7, key[7]
+0018: XOR_IMM r0, 0x38
+001e: AND_IMM r0, 0xdf
+0024: XOR_IMM r2, 0x1a
+002a: AND_IMM r2, 0xfb
+0030: XOR_IMM r3, 0x4a
+0036: AND_IMM r3, 0xfe
+003c: XOR_IMM r5, 0xcc
+0042: AND_IMM r5, 0xf7
+0048: LOOKUP r0 = SBOX[r0]
+004b: LOOKUP r1 = SBOX[r1]
+004e: LOOKUP r2 = SBOX[r2]
+0051: LOOKUP r3 = SBOX[r3]
+0054: LOOKUP r4 = SBOX[r4]
+0057: LOOKUP r5 = SBOX[r5]
+005a: LOOKUP r6 = SBOX[r6]
+005d: LOOKUP r7 = SBOX[r7]
+0060: XOR r0, r1
+0063: XOR r1, r2
+0066: XOR r2, r3
+0069: XOR r3, r4
+006c: XOR r4, r5
+006f: XOR r5, r6
+0072: XOR r6, r7
+0075: XOR r7, r0
+0078: XOR r0, r3
+007b: XOR r1, r4
+007e: XOR r2, r5
+0081: XOR r3, r6
+0084: XOR r4, r7
+0087: XOR r5, r0
+008a: XOR r6, r1
+008d: XOR r7, r2
+0090: XOR_IMM r0, 0x97
+0096: XOR_IMM r1, 0x5c
+009c: XOR_IMM r2, 0x5a
+00a2: XOR_IMM r3, 0x3c
+00a8: XOR_IMM r4, 0x1b
+00ae: XOR_IMM r5, 0xa2
+00b4: XOR_IMM r6, 0xf0
+00ba: XOR_IMM r7, 0x53
+00c0: LOOKUP r0 = SBOX[r0]
+00c3: LOOKUP r1 = SBOX[r1]
+00c6: LOOKUP r2 = SBOX[r2]
+00c9: LOOKUP r3 = SBOX[r3]
+00cc: LOOKUP r4 = SBOX[r4]
+00cf: LOOKUP r5 = SBOX[r5]
+00d2: LOOKUP r6 = SBOX[r6]
+00d5: LOOKUP r7 = SBOX[r7]
+00d8: XOR r0, r1
+00db: XOR r1, r2
+00de: XOR r2, r3
+00e1: XOR r3, r4
+00e4: XOR r4, r5
+00e7: XOR r5, r6
+00ea: XOR r6, r7
+00ed: XOR r7, r0
+00f0: XOR r0, r3
+00f3: XOR r1, r4
+00f6: XOR r2, r5
+00f9: XOR r3, r6
+00fc: XOR r4, r7
+00ff: XOR r5, r0
+0102: XOR r6, r1
+0105: XOR r7, r2
+0108: XOR_IMM r0, 0xd7
+010e: XOR_IMM r1, 0xcd
+0114: XOR_IMM r2, 0x7a
+011a: XOR_IMM r3, 0xda
+0120: XOR_IMM r4, 0xcd
+0126: XOR_IMM r5, 0xd1
+012c: XOR_IMM r6, 0x67
+0132: XOR_IMM r7, 0x72
+0138: LOOKUP r0 = SBOX[r0]
+013b: LOOKUP r1 = SBOX[r1]
+013e: LOOKUP r2 = SBOX[r2]
+0141: LOOKUP r3 = SBOX[r3]
+0144: LOOKUP r4 = SBOX[r4]
+0147: LOOKUP r5 = SBOX[r5]
+014a: LOOKUP r6 = SBOX[r6]
+014d: LOOKUP r7 = SBOX[r7]
+0150: XOR r0, r1
+0153: XOR r1, r2
+0156: XOR r2, r3
+0159: XOR r3, r4
+015c: XOR r4, r5
+015f: XOR r5, r6
+0162: XOR r6, r7
+0165: XOR r7, r0
+0168: XOR r0, r3
+016b: XOR r1, r4
+016e: XOR r2, r5
+0171: XOR r3, r6
+0174: XOR r4, r7
+0177: XOR r5, r0
+017a: XOR r6, r1
+017d: XOR r7, r2
+0180: XOR_IMM r0, 0xa8
+0186: XOR_IMM r1, 0x78
+018c: XOR_IMM r2, 0x74
+0192: XOR_IMM r3, 0x93
+0198: XOR_IMM r4, 0x63
+019e: XOR_IMM r5, 0xa7
+01a4: XOR_IMM r6, 0x9c
+01aa: XOR_IMM r7, 0xdb
+01b0: MOV r0, r0
+01b3: MOV r0, r0
+01b6: MOV r0, r0
+01b9: MOV r0, r0
+01bc: MOV r0, r0
+01bf: MOV r0, r0
+01c2: MOV r0, r0
+01c5: MOV r0, r0
+01c8: MOV r0, r0
+01cb: MOV r0, r0
+01ce: MOV r0, r0
+01d1: MOV r0, r0
+01d4: MOV r0, r0
+01d7: MOV r0, r0
+01da: MOV r0, r0
+01dd: MOV r0, r0
+01e0: MOV r0, r0
+01e3: MOV r0, r0
+01e6: MOV r0, r0
+01e9: MOV r0, r0
+01ec: MOV r0, r0
+01ef: MOV r0, r0
+01f2: MOV r0, r0
+01f5: MOV r0, r0
+01f8: MOV r0, r0
+01fb: MOV r0, r0
+01fe: MOV r0, r0
+0201: MOV r0, r0
+0204: MOV r0, r0
+0207: MOV r0, r0
+020a: MOV r0, r0
+020d: MOV r0, r0
+0210: MOV r0, r0
+0213: MOV r0, r0
+0216: MOV r0, r0
+0219: MOV r0, r0
+021c: MOV r0, r0
+021f: MOV r0, r0
+0222: MOV r0, r0
+0225: MOV r0, r0
+0228: MOV r0, r0
+022b: MOV r0, r0
+022e: MOV r0, r0
+0231: MOV r0, r0
+0234: MOV r0, r0
+0237: MOV r0, r0
+023a: MOV r0, r0
+023d: MOV r0, r0
+0240: MOV r0, r0
+0243: MOV r0, r0
+0246: MOV r0, r0
+0249: MOV r0, r0
+024c: MOV r0, r0
+024f: MOV r0, r0
+0252: MOV r0, r0
+0255: MOV r0, r0
+0258: ASSERT_EQ r0, 0xd1
+025e: ASSERT_EQ r1, 0x36
+0264: ASSERT_EQ r2, 0x46
+026a: ASSERT_EQ r3, 0xad
+0270: ASSERT_EQ r4, 0x82
+0276: ASSERT_EQ r5, 0x5
+027c: ASSERT_EQ r6, 0x29
+0282: ASSERT_EQ r7, 0x9f
+0288: HALT

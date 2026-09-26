@@ -347,3 +347,21 @@ ew File(baseDir, path)) without canonicalization.
   - When the market price drops and the borrower becomes underwater, keeper bots attempting to trigger `Ix::Liquidate` exhaust their compute budget inside the loop over positions ($O(N)$ SBF operations), causing the liquidation transaction to revert.
   - The collateral cannot be seized, resulting in permanent default without clawback.
 
+---
+
+## 24. Custom VM Reversing & SPN Cipher Inversion for Cryptographic Key Custody
+* **Vulnerability Class / Reversing Pattern:** Distributed Custom Virtual Machine Agent Bytecode with Cryptographic Obfuscation.
+* **Mechanism & Pitfall:**
+  - Proprietary key-custody / shard systems distribute root custody seeds across multiple autonomous agent executables/shards.
+  - Shards encapsulate custom VM bytecode executing over virtual registers (e.g. 14 registers $r_0 \dots r_{13}$, 32-bit width).
+  - VM instructions alternate between non-linear S-box substitutions and linear permutations (Substitution-Permutation Network, SPN).
+  - When agents employ bit-masking operations (e.g. `AND_IMM` clearing bits of intermediate registers before S-box lookups), forward VM execution loses information, resulting in $2^k$ candidate inputs that all satisfy the terminal assertion constraints (`CMP` / `ASSERT_EQ`).
+* **Analytical Inversion Pipeline:**
+  1. **Jump Table & Opcode Recovery:** Disassemble the runtime VM dispatch loop to extract instruction boundaries, argument sizing, and register mapping.
+  2. **Template Matching Across Shards:** Even when decode tables are scrambled or encrypted across shards, bytecode structure remains invariant (identical opcode boundaries and register operands). Reconstruct decode tables by mapping template opcode positions directly to the raw opcode bytes.
+  3. **Analytical Cipher Inversion:** Rather than relying on heavyweight SMT constraint solvers (which experience combinatorial explosion with nested 256-case S-box ASTs), run the SPN cipher backwards from final assertion constants:
+     - Invert linear register XOR mixing by executing XOR assignments in reverse order ($r_a \oplus= r_b$ is self-inverse).
+     - Invert S-box substitutions using the precomputed permutation inverse $\text{SBOX}^{-1}$.
+     - Branch across masked bit combinations to enumerate the exact $2^k$ input key candidates in milliseconds.
+  4. **Public Key Disambiguation:** Concat candidate fragments in valid chain permutations and test against the instance's public key (e.g. Ed25519 scalar multiplication $A = a \cdot B$). An exact 256-bit public key match uniquely resolves the true seed and eliminates all ambiguous masking bits.
+   5. **Instance Handout Synchronization:** In distributed cloud CTFs where challenge instances initialize a fresh keypair on container start, verify if the live service serves its synchronized shard archive (e.g. /handout.tar.gz) directly over HTTP before attempting attestation with stale handout keys.

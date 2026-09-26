@@ -1,4 +1,4 @@
 Description
-perpguard is a solana lending market: post collateral, open positions, borrow.
+A retired key-custody vault shattered its root seed across a mesh of tiny guardian agents and lost the tool that glues them back. The re-attestation socket is still listening.
 
-you're a borrower who plans to default, and your collateral is about to be marked down. end up underwater on a loan no keeper can ever claw back.   nc web3.h7tex.com 43215
+Put the seed back together and prove it to the socket.  https://web-986d60e27fd022f4.web.h7tex.com

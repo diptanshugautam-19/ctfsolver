@@ -33,3 +33,9 @@ challenges:
   vouchsafe:
     host: "web-d83cf58e26d1e625.web.h7tex.com"
     port: 443
+  trustfall:
+    host: "web-ed6ee3522fea7aae.web.h7tex.com"
+    port: 443
+  kintsugi_vault:
+    host: "web-986d60e27fd022f4.web.h7tex.com"
+    port: 443
