@@ -175,4 +175,27 @@ This file serves as the long-term memory for techniques, patterns, and lessons l
 * **Confused Deputy Mitigation & `ExternalId` Secret Exfiltration:**
   - When third-party cross-account roles require an `sts:ExternalId` condition, extracting the configured `ExternalId` from misconfigured storage (e.g. partner S3 buckets or configuration files) allows unauthorized callers to assume the hardened role and access sensitive crown vaults.
 
+---
 
+## 13. Cryptography & Hardware Public Key Generation
+* **Batch GCD / Shared Prime Factorization (Factorable Keys):**
+  - Occurs when IoT/embedded devices or fleets manufactured on identical assembly lines use low-entropy PRNG seeds.
+  - Distinct devices share a single prime factor ($N_1 = p \cdot q_1$, $N_2 = p \cdot q_2$).
+  - Pairwise GCD computation $gcd(N_i, N_j)$ across public certificates rapidly extracts $p$.
+  - Once $p$ is recovered, calculate $q = N/p$, $\phi(N) = (p - 1)(q - 1)$, and $d = e^{-1} \pmod{\phi(N)}$.
+  - Decrypt RSA/PKCS#1 v1.5 ciphertexts by stripping prefix ``\x00\x02[padding]\x00[data]``.
+
+---
+
+## 14. Binary Exploitation & Linux ROP (glibc 2.34 - 2.39+)
+* **Two-Stage ret2libc with Partial RELRO / No PIE:**
+  - When binaries lack Stack Canaries and PIE (`ET_EXEC`), code addresses (`puts@plt`, `main`, gadgets) and `.got.plt` entries are statically located at fixed virtual addresses.
+  - **Stage 1 (Information Leak):**
+    - Payload: `[padding to RIP] + pop_rdi_ret + puts@got + puts@plt + main`
+    - Prints raw bytes of resolved `puts@got` in libc, then loops execution cleanly back to `main()`.
+    - Compute `libc_base = puts_leak - libc.symbols['puts']`.
+  - **Stage 2 (Spawning Shell with 16-Byte Stack Alignment):**
+    - x86-64 AII requires the stack pointer `RSP` to be 16-byte aligned before entering functions using SSE/AVX instructions (e.g. `system()` calling `do_system` / `movaps`).
+    - Prepend a single `ret` gadget before `pop rdi`:
+      `[padding to RIP] + ret + pop_rdi_ret + binsh_addr + system_addr`
+    - Executes `system("/bin/sh")` cleanly without crashing on `movaps`.
