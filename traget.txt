@@ -1,3 +1,3 @@
-The Sparrow Freight border checkpoint takes down your name, denies you entry, and tells you to turn back. Somewhere behind the booth is the stamp that waves people straight through, and the guard is not going to reach for it on your account.
+The boardroom's always-on AV bridge got quietly compromised, and it still dutifully streams the room its live feed. Whoever owns it now is riding that same feed to walk secrets out the door.
 
-So reach for it yourself.   nc pwn.h7tex.com 43055
+Nobody in the meeting hears a thing wrong. That is rather the point.  https://web-17e4256823c5a05c.web.h7tex.com

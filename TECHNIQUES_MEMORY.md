@@ -245,3 +245,23 @@ et gadget often already satisfies the 16-byte alignment when win performs push r
        - Vector A: p64(win)
        - Vector B: p64(ret) + p64(win) (adds 8 bytes to RSP)
        - Vector C: p64(win + 5) (skips push rbp; mov rbp, rsp)
+
+---
+
+## 18. AFSK Audio Covert Channel & Bell 202 / 300-Baud Demodulation
+* **Detection & Pipeline:**
+  1. **RMS Energy Profiling:**
+     - Compute windowed RMS energy across audio tracks (e.g. 100ms chunks) to isolate discrete signal bursts embedded within ambient room noise.
+  2. **Frequency Identification:**
+     - Take FFT of the active window. Peak clusters around 1200 Hz (Mark) and 2200 Hz (Space) signify Bell 202 standard AFSK tones.
+     - Observe the initial carrier burst (typically 100–200ms of unmodulated 1200 Hz) to calibrate the preamble.
+  3. **Discriminator Implementation:**
+     - Apply bandpass filtering around the carrier region (1000–2400 Hz).
+     - Calculate instantaneous frequency via analytic signal phase derivative:
+       inst_freq = np.diff(np.unwrap(np.angle(hilbert(filtered)))) * sr / (2 * np.pi)
+     - Smooth with a low-pass filter configured to the expected symbol rate (e.g. 600 Hz cutoff).
+     - Center deviation around (f_mark + f_space) / 2 = 1700 Hz.
+  4. **Baud Rate Calibration & Framing:**
+     - Measure symbol transitions; consecutive run-lengths indicate the baud rate.
+     - If run-lengths cluster at multiples of 4 samples relative to 1200 baud, the transmission is 300 baud (samples_per_bit = sample_rate / 300).
+     - Demodulate via standard asynchronous serial UART (8N1: start bit = 0, 8 data bits LSB first, stop bit = 1).
