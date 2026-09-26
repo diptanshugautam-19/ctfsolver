@@ -265,3 +265,18 @@ et gadget often already satisfies the 16-byte alignment when win performs push r
      - Measure symbol transitions; consecutive run-lengths indicate the baud rate.
      - If run-lengths cluster at multiples of 4 samples relative to 1200 baud, the transmission is 300 baud (samples_per_bit = sample_rate / 300).
      - Demodulate via standard asynchronous serial UART (8N1: start bit = 0, 8 data bits LSB first, stop bit = 1).
+
+---
+
+## 19. Android Component Security: ContentProvider Traversal & WebView Deep Link Prefix Bypass
+* **Exported ContentProvider Path Traversal:**
+  - **Mechanic:** ContentProvider.openFile(Uri uri, String mode) implementations that strip a static path prefix (e.g. /files/) and append the rest directly to a base directory (
+ew File(baseDir, path)) without canonicalization.
+  - **Verification:** An attacker queries content://<authority>/files/../../<target> using db shell content read --uri ....
+  - **Defense/Remediation:** Enforce canonical path containment:
+    if (!file.getCanonicalPath().startsWith(baseDir.getCanonicalPath())) throw new SecurityException();
+* **WebView Deep Link Origin Validation Flaws:**
+  - **Mechanic:** Deep-link handlers (RouterActivity) forwarding external ?url= parameters to internal WebViewActivity instances.
+  - **Validation Flaw:** Verifying destinations with url.startsWith(baseUrl).
+  - **Impact:** http://expected-domain@attacker-domain/ satisfies startsWith("http://expected-domain") but routes to ttacker-domain, leaking headers passed via loadUrl(url, headers).
+  - **Defense/Remediation:** Parse the URI into ndroid.net.Uri and strictly validate uri.getHost(), uri.getScheme(), and uri.getPort() against an allowlist.

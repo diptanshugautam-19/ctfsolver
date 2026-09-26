@@ -1,0 +1,276 @@
+=== AndroidManifest.xml ===
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="30201" android:versionName="3.2.1" android:compileSdkVersion="35" android:compileSdkVersionCodename="15" package="com.meridian.pay" platformBuildVersionCode="35" platformBuildVersionName="15">
+  <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="34"/>
+  <uses-permission android:name="android.permission.INTERNET"/>
+  <application android:theme="@android:01030237" android:label="@7F030000" android:icon="@android:01080093" android:allowBackup="true" android:usesCleartextTraffic="true">
+    <activity android:name=".MainActivity" android:exported="true">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+    </activity>
+    <activity android:name=".RouterActivity" android:exported="true">
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+        <data android:scheme="meridianpay" android:host="open"/>
+      </intent-filter>
+      <intent-filter android:autoVerify="false">
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+        <data android:scheme="https" android:host="links.meridianpay.io" android:pathPrefix="/open"/>
+      </intent-filter>
+    </activity>
+    <activity android:name=".WebViewActivity" android:exported="false"/>
+    <provider android:name=".ExportProvider" android:exported="true" android:authorities="com.meridian.pay.export" android:grantUriPermissions="true"/>
+  </application>
+</manifest>
+
+
+=== Decompiled Classes ===
+
+============================================================
+CLASS: Lcom/meridian/pay/ApiClient$Resp;
+============================================================
+
+--- Lcom/meridian/pay/ApiClient$Resp;-><init>()V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+============================================================
+CLASS: Lcom/meridian/pay/ApiClient;
+============================================================
+
+--- Lcom/meridian/pay/ApiClient;-><init>()V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/ApiClient;->get(Ljava/lang/String; Ljava/util/Map;)Lcom/meridian/pay/ApiClient$Resp; ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/ApiClient;->post(Ljava/lang/String; Ljava/lang/String; Ljava/util/Map;)Lcom/meridian/pay/ApiClient$Resp; ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/ApiClient;->read(Ljava/net/HttpURLConnection;)Lcom/meridian/pay/ApiClient$Resp; ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+============================================================
+CLASS: Lcom/meridian/pay/ExportProvider;
+============================================================
+
+--- Lcom/meridian/pay/ExportProvider;-><init>()V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/ExportProvider;->delete(Landroid/net/Uri; Ljava/lang/String; [Ljava/lang/String;)I ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/ExportProvider;->getType(Landroid/net/Uri;)Ljava/lang/String; ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/ExportProvider;->insert(Landroid/net/Uri; Landroid/content/ContentValues;)Landroid/net/Uri; ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/ExportProvider;->onCreate()Z ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/ExportProvider;->openFile(Landroid/net/Uri; Ljava/lang/String;)Landroid/os/ParcelFileDescriptor; ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/ExportProvider;->query(Landroid/net/Uri; [Ljava/lang/String; Ljava/lang/String; [Ljava/lang/String; Ljava/lang/String;)Landroid/database/Cursor; ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/ExportProvider;->update(Landroid/net/Uri; Landroid/content/ContentValues; Ljava/lang/String; [Ljava/lang/String;)I ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/ExportProvider;->getContext()Landroid/content/Context; ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+============================================================
+CLASS: Lcom/meridian/pay/MainActivity$1;
+============================================================
+
+--- Lcom/meridian/pay/MainActivity$1;-><init>(Lcom/meridian/pay/MainActivity;)V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/MainActivity$1;->onClick(Landroid/view/View;)V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+============================================================
+CLASS: Lcom/meridian/pay/MainActivity$2;
+============================================================
+
+--- Lcom/meridian/pay/MainActivity$2;-><init>(Lcom/meridian/pay/MainActivity;)V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/MainActivity$2;->onClick(Landroid/view/View;)V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+============================================================
+CLASS: Lcom/meridian/pay/MainActivity$3;
+============================================================
+
+--- Lcom/meridian/pay/MainActivity$3;-><init>(Lcom/meridian/pay/MainActivity;)V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/MainActivity$3;->onClick(Landroid/view/View;)V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+============================================================
+CLASS: Lcom/meridian/pay/MainActivity$4$1;
+============================================================
+
+--- Lcom/meridian/pay/MainActivity$4$1;-><init>(Lcom/meridian/pay/MainActivity$4; Ljava/lang/String; Ljava/lang/String; Ljava/lang/String;)V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/MainActivity$4$1;->run()V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+============================================================
+CLASS: Lcom/meridian/pay/MainActivity$4;
+============================================================
+
+--- Lcom/meridian/pay/MainActivity$4;-><init>(Lcom/meridian/pay/MainActivity; Ljava/lang/String;)V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/MainActivity$4;->run()V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+============================================================
+CLASS: Lcom/meridian/pay/MainActivity;
+============================================================
+
+--- Lcom/meridian/pay/MainActivity;->-$$Nest$fgetaccount(Lcom/meridian/pay/MainActivity;)Landroid/widget/TextView; ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/MainActivity;->-$$Nest$fgetpromo(Lcom/meridian/pay/MainActivity;)Landroid/widget/Button; ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/MainActivity;->-$$Nest$fgetserverField(Lcom/meridian/pay/MainActivity;)Landroid/widget/EditText; ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/MainActivity;->-$$Nest$fgetsession(Lcom/meridian/pay/MainActivity;)Lcom/meridian/pay/Session; ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/MainActivity;->-$$Nest$fgetstatus(Lcom/meridian/pay/MainActivity;)Landroid/widget/TextView; ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/MainActivity;->-$$Nest$mconnect(Lcom/meridian/pay/MainActivity;)V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/MainActivity;-><init>()V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/MainActivity;->connect()V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/MainActivity;->seedReceipts()V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/MainActivity;->onCreate(Landroid/os/Bundle;)V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/MainActivity;->startActivity(Landroid/content/Intent;)V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/MainActivity;->runOnUiThread(Ljava/lang/Runnable;)V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/MainActivity;->getFilesDir()Ljava/io/File; ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/MainActivity;->setContentView(I)V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/MainActivity;->findViewById(I)Landroid/view/View; ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+============================================================
+CLASS: Lcom/meridian/pay/R$id;
+============================================================
+
+--- Lcom/meridian/pay/R$id;-><init>()V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+============================================================
+CLASS: Lcom/meridian/pay/R$layout;
+============================================================
+
+--- Lcom/meridian/pay/R$layout;-><init>()V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+============================================================
+CLASS: Lcom/meridian/pay/R$string;
+============================================================
+
+--- Lcom/meridian/pay/R$string;-><init>()V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+============================================================
+CLASS: Lcom/meridian/pay/R;
+============================================================
+
+--- Lcom/meridian/pay/R;-><init>()V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+============================================================
+CLASS: Lcom/meridian/pay/RouterActivity;
+============================================================
+
+--- Lcom/meridian/pay/RouterActivity;-><init>()V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/RouterActivity;->onCreate(Landroid/os/Bundle;)V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/RouterActivity;->getIntent()Landroid/content/Intent; ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/RouterActivity;->startActivity(Landroid/content/Intent;)V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/RouterActivity;->finish()V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+============================================================
+CLASS: Lcom/meridian/pay/Session;
+============================================================
+
+--- Lcom/meridian/pay/Session;-><init>(Landroid/content/Context;)V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/Session;->accountName()Ljava/lang/String; ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/Session;->baseUrl()Ljava/lang/String; ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/Session;->deviceId()Ljava/lang/String; ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/Session;->setBaseUrl(Ljava/lang/String;)V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/Session;->setSession(Ljava/lang/String; Ljava/lang/String;)V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/Session;->token()Ljava/lang/String; ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+============================================================
+CLASS: Lcom/meridian/pay/WebViewActivity;
+============================================================
+
+--- Lcom/meridian/pay/WebViewActivity;-><init>()V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/WebViewActivity;->onCreate(Landroid/os/Bundle;)V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/WebViewActivity;->setContentView(Landroid/view/View;)V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/WebViewActivity;->getIntent()Landroid/content/Intent; ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
+
+--- Lcom/meridian/pay/WebViewActivity;->finish()V ---
+Decompile error: 'MethodAnalysis' object has no attribute 'get_source'
