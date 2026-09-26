@@ -165,3 +165,14 @@ This file serves as the long-term memory for techniques, patterns, and lessons l
     - *Frame Alignment:* Segment burst by inter-frame idle periods ($> 1.5\text{ ms}$). Look for $N$-bit payload + trailing stop pulse.
     - *Rolling Counter & Checksum Recovery:* Compare frames vertically. Static bits represent Remote ID / Serial (e.g., 32-bit `24ae4909`). Changing bytes reveal counter progression (e.g., $+7$ linear delta) and trailing checksums/CRCs (e.g. nibble sum modulo 15 or linear offset $\sum \text{nibbles} - 56$). Predict next frame without key recovery.
 
+---
+
+## 12. Cloud & AWS IAM Security
+* **Lambda `iam:PassRole` Privilege Escalation:**
+  - An entity with `lambda:CreateFunction`, `lambda:InvokeFunction`, and `iam:PassRole` on a service role (e.g. `ci-runner-role`) can deploy a Lambda function that executes under that role and exfiltrates its temporary STS credentials (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`).
+* **Cross-Account Trust Exploitation (`sts:AssumeRole`):**
+  - Roles with permissive trust relationships allow lateral movement across accounts without MFA or IP restrictions.
+* **Confused Deputy Mitigation & `ExternalId` Secret Exfiltration:**
+  - When third-party cross-account roles require an `sts:ExternalId` condition, extracting the configured `ExternalId` from misconfigured storage (e.g. partner S3 buckets or configuration files) allows unauthorized callers to assume the hardened role and access sensitive crown vaults.
+
+
