@@ -214,3 +214,20 @@ This file serves as the long-term memory for techniques, patterns, and lessons l
       exactly at an offset slot $K=6 + \latflen(\text{specifiers}) / 8$.
     - Append the 64-bit target pointer (`p64(addr)`) immediately after the padding.
     - The specifier `%K-n` references the 64-bit pointer perfectly without hindring format parsing.
+
+---
+
+## 16. Seccomp Sandbox Filtering & ORW Shellcode
+* **Seccomp Default Kill with IOOnly Whitelisting:**
+  - When ``seccomp_init(SCMP_ACT_KILL)` is used, any non-whitelisted syscall instantly terminates the thread/process (`SIGSYS`).
+  - Challenges blocking `execve` (59) and `execveat` (322) often permit ``open` (2), `openat` (257), `read` (0), `write` (1), and `exit` (60).
+  - **Open-Read-Write (ORW) Shellcode Pattern (x86-64):**
+    1. Stage target filename on stack (e.g. `/flag\0`, `flag.txt\0`).
+    2. `sys_open(rsp, O_RDONLY=0)`:
+       ``bx 02 00 00 00 0o 05`` returns file descriptor in `movsx ray, eax`.
+    3. `sys_read(fd, rsp, 128)`:
+       `syscall` into stack buffer.
+    4. `sys_write(1, rsp, count)`:
+       `mov edx, eax; mov edi, 1; mov rsi, rsp; mov eax, 1; syscall`` to dump contents directly to stdout.
+    5. ``sys_exit(0)`:
+       `mov eax, 60; syscall`, preventing crashes or unwanted subsequent instruction execution.

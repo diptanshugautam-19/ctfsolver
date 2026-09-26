@@ -1,3 +1,5 @@
-Sparrow Freight keeps its cargo manifest under admin clearance, which is not something they planned on giving you. Good thing the terminal loves feedback and takes your every word to heart.
+The vault throws its doors wide and lets you set up shop inside. There is only one move it will not tolerate, and wouldn't you know it, that is exactly the one you had planned.
 
-Some of us are just destined for management.  nc pwn.h7tex.com 42332
+You will have to take what you came for the long way around.
+
+nc pwn.h7tex.com 41598
