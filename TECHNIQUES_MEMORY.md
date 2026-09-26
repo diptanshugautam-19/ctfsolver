@@ -231,3 +231,17 @@ This file serves as the long-term memory for techniques, patterns, and lessons l
        `mov edx, eax; mov edi, 1; mov rsi, rsp; mov eax, 1; syscall`` to dump contents directly to stdout.
     5. ``sys_exit(0)`:
        `mov eax, 60; syscall`, preventing crashes or unwanted subsequent instruction execution.
+
+---
+
+## 17. x86-64 ret2win Stack Alignment Dynamics
+* **16-Byte ABI Accounting for Win Functions:**
+  - x86-64 System V ABI requires RSP % 16 == 0 immediately before any call instruction (and RSP % 16 == 8 at function entry).
+  - When overwriting a return address directly with win():
+    1. If the vulnerable function executes leave; ret into win():
+       - Executing win directly without an intermediate 
+et gadget often already satisfies the 16-byte alignment when win performs push rbp followed by sub rsp, multiple_of_16.
+    2. Trial Vectors:
+       - Vector A: p64(win)
+       - Vector B: p64(ret) + p64(win) (adds 8 bytes to RSP)
+       - Vector C: p64(win + 5) (skips push rbp; mov rbp, rsp)

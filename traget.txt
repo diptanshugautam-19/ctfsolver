@@ -1,5 +1,3 @@
-The vault throws its doors wide and lets you set up shop inside. There is only one move it will not tolerate, and wouldn't you know it, that is exactly the one you had planned.
+The Sparrow Freight border checkpoint takes down your name, denies you entry, and tells you to turn back. Somewhere behind the booth is the stamp that waves people straight through, and the guard is not going to reach for it on your account.
 
-You will have to take what you came for the long way around.
-
-nc pwn.h7tex.com 41598
+So reach for it yourself.   nc pwn.h7tex.com 43055
