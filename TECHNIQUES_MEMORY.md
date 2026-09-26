@@ -111,6 +111,13 @@ This file serves as the long-term memory for techniques, patterns, and lessons l
   - `ptrlib`: Lightweight CTF library by ptr-yudai for fast binary/crypto interactions (`from ptrlib import *`).
 * **IDA Pro Live MCP Server (`tools/pcm`):**
   - If IDA Pro is running locally, `tools/pcm` acts as a Model Context Protocol server connecting directly to Hex-Rays decompiler, basic block graphs, cross-references, and IDAPython REPL.
+* **glibc 2.32+ Safe-Linking Tcache Poisoning & GOT Hijacking:**
+  - Pointers in tcache are protected with safe-linking: $P' = P \oplus (L \gg 12)$, where $L$ is the pointer's memory location.
+  - The tail of a tcache list points to `NULL`, so `tail->fd = 0 ^ (L_{tail} >> 12) = L_{tail} >> 12`.
+  - A UAF read on the tail chunk immediately leaks the safe-linking key $K = L \gg 12$.
+  - To poison a chunk on the same heap page to point to an arbitrary 16-byte aligned address $T$, write $T \oplus K$ into its `fd`.
+  - In binaries with No PIE and Partial RELRO, $T$ can directly target the Global Offset Table (e.g. `0x404000`), allowing immediate overwrite of PLT stubs (`puts@GOT`, `free@GOT`) with existing win functions (`audit()`).
+
 
 ---
 
