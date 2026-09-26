@@ -93,6 +93,15 @@ This file serves as the long-term memory for techniques, patterns, and lessons l
     - During the intermediate callback, `token.balanceOf(pool)` is still high while `totalSupply` is already reduced, artificially spiking `get_virtual_price() = (balance + tokens) / totalSupply`.
     - Exploitation: Deposit small collateral into a lending protocol using that pool's `get_virtual_price()`, trigger `removeLiquidity()`, borrow the maximum inflated debt inside the `receive()` callback, and let the transaction finish. The final collateral value normalizes while `totalDebt` remains permanently higher, rendering the protocol undercollateralized.
   - **Compiler Bugs (Vyper / Solc):** Vyper `concat()` leading byte overwrite (CVE-2024-22419), ABI decoding dynamic array negative offset read (CVE-2024-26149).
+  - **ERC-4626 First Depositor / Share Inflation Attack (GenesisVault pattern):**
+    - Occurs when `convertToShares` calculates $\text{assets} \times \text{totalSupply} / \text{reserve}$ and integer division truncates to zero when $\text{assets} \times \text{totalSupply} < \text{reserve}$.
+    - Exploit Flow:
+      1. Attacker deposits 1 wei of assets when `totalSupply == 0`, receiving 1 wei of shares.
+      2. Attacker transfers large donation $D$ directly to vault and calls `sync()` (updating `reserve = D + 1` while `totalSupply = 1`).
+      3. Target victim deposits amount $D$. Vault calculates $\text{shares} = \lfloor D \times 1 / (D + 1) \rfloor = 0$. Victim receives 0 shares.
+      4. Attacker redeems their 1 share via `redeem(1, ...)` and claims $\lfloor 1 \times (2D + 1) / 1 \rfloor = 2D + 1$, extracting all assets.
+    - Mitigations: Virtual shares/offset (e.g. OpenZeppelin ERC4626 +1 share / +1 asset virtual offset) or permanently locking the initial $1000$ shares to `address(0)`.
+
 
 ---
 
