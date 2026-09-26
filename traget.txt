@@ -1,3 +1,4 @@
-Meridian Pay is a neobank that shipped in a hurry and trusts everyone: the client trusts the server, the server trusts the client, and both trust the phone underneath. Four separate cracks are hiding in that arrangement, some in the app and some in the API behind it, one flag each.
+Description
+A single burst went out over the air next to a device nobody can name. No datasheet, no protocol notes, not so much as a label on the case.
 
-Move fast, break banks.   https://web-f747413d78eddd9f.web.h7tex.com
+Whatever it said, it only said once. Read it back.    https://web-372d030d5bcef7b1.web.h7tex.com

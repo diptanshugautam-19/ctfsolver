@@ -14,3 +14,4 @@
 {"timestamp": "2026-09-26T07:42:00Z", "challenge": "checkpoint", "category": "pwn", "tool": "solutions/checkpoint/solve.py", "flag": "H7CTF{0b3091f1-ac51-4433-8288-808b378c20f7}", "status": "solved", "elapsed_seconds": 0.7}
 {"timestamp": "2026-09-26T08:32:00Z", "challenge": "boardroom_av", "category": "web", "tool": "solutions/boardroom_av/solve.py", "flag": "H7CTF{2fb1aabd-652b-4ff7-b700-2af47886108e}", "status": "solved", "elapsed_seconds": 3.1}
 {"timestamp": "2026-09-26T09:56:00Z", "challenge": "meridian_pay", "category": "mobile", "tool": "solutions/meridian_pay/solve.py", "flag": "H7CTF{138d04db-d152-45e8-b1f0-a3a7166bc980}", "status": "in_progress", "elapsed_seconds": 2.1}
+{"timestamp": "2026-09-26T10:25:21Z", "challenge": "field_capture", "category": "hardware", "tool": "solutions/field_capture/solve.py", "flag": "H7CTF{ef269fcb-67f2-4ff2-9fe2-45cc8d5c70ca}", "status": "solved", "elapsed_seconds": 0.6}

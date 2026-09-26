@@ -254,9 +254,9 @@ et gadget often already satisfies the 16-byte alignment when win performs push r
      - Compute windowed RMS energy across audio tracks (e.g. 100ms chunks) to isolate discrete signal bursts embedded within ambient room noise.
   2. **Frequency Identification:**
      - Take FFT of the active window. Peak clusters around 1200 Hz (Mark) and 2200 Hz (Space) signify Bell 202 standard AFSK tones.
-     - Observe the initial carrier burst (typically 100–200ms of unmodulated 1200 Hz) to calibrate the preamble.
+     - Observe the initial carrier burst (typically 100â€“200ms of unmodulated 1200 Hz) to calibrate the preamble.
   3. **Discriminator Implementation:**
-     - Apply bandpass filtering around the carrier region (1000–2400 Hz).
+     - Apply bandpass filtering around the carrier region (1000â€“2400 Hz).
      - Calculate instantaneous frequency via analytic signal phase derivative:
        inst_freq = np.diff(np.unwrap(np.angle(hilbert(filtered)))) * sr / (2 * np.pi)
      - Smooth with a low-pass filter configured to the expected symbol rate (e.g. 600 Hz cutoff).
@@ -280,3 +280,22 @@ ew File(baseDir, path)) without canonicalization.
   - **Validation Flaw:** Verifying destinations with url.startsWith(baseUrl).
   - **Impact:** http://expected-domain@attacker-domain/ satisfies startsWith("http://expected-domain") but routes to ttacker-domain, leaking headers passed via loadUrl(url, headers).
   - **Defense/Remediation:** Parse the URI into ndroid.net.Uri and strictly validate uri.getHost(), uri.getScheme(), and uri.getPort() against an allowlist.
+
+---
+
+## 20. SDR & RF: 2-FSK Demodulation and CC1101 Packet Recovery
+* **Raw Baseband Complex I/Q (cf32):**
+  - **Structure:** Interleaved 32-bit floats [I0, Q0, I1, Q1, ...]. Load via np.fromfile(path, dtype=np.complex64).
+  - **Burst Boundary Isolation:** Scan absolute magnitude |z| = sqrt(I^2 + Q^2). Locate the steep envelope rise and fall to isolate active transmission bursts.
+  - **Spectral Peak Identification:** Compute FFT spectrum np.fft.fft(signal) to determine the Mark (f1) and Space (f0) tone frequencies and center carrier fc = (f0 + f1) / 2, delta_f = (f1 - f0) / 2.
+  - **Baud Rate Estimation:** Spectral sidebands or autocorrelation / run-length analysis of instantaneous frequency transitions reveal the symbol period and baud rate Rs = fs / samples_per_symbol.
+* **Demodulation via Tone Correlation:**
+  - For each symbol window of length N, correlate with reference complex sinusoids exp(2j * pi * f1 * t) and exp(2j * pi * f0 * t).
+  - Bit decision: c(f1) > c(f0) -> 1, else 0.
+* **CC1101 Transceiver Packet Architecture:**
+  - **Preamble:** Alternating 10101010 (0xAA) bytes (typically 4-8 bytes) for receiver AGC and bit synchronization.
+  - **Sync Word:** Standard 2-byte sync words (e.g. 0x2D 0xD4 or 0xD3 0x91).
+  - **Framing:**
+    - Byte 0: Packet length L (number of payload bytes).
+    - Bytes 1..L: Payload data (ASCII text, flags, sensor data).
+    - Trailing 2 bytes: CRC-16-CCITT (polynomial 0x1021, init 0xFFFF) calculated over [length + payload].
