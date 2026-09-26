@@ -88,7 +88,10 @@ This file serves as the long-term memory for techniques, patterns, and lessons l
   - **Reentrancy:** State updates after external `.call{value: ...}("")`. Mitigate with Checks-Effects-Interactions (CEI) or ReentrancyGuard.
   - **`delegatecall` Storage Collisions:** Code executes in caller context; storage slot 0 in logic contract overwrites slot 0 (often `owner`) in proxy contract.
   - **Force-Feeding Ether:** `selfdestruct(target)` bypasses `receive()` / `fallback()` functions, breaking contracts relying on `address(this).balance == X`.
-  - **Oracle / Flash Loan Manipulation:** Spot price manipulation on AMM pools (Uniswap v2/v3 pairs); always check TWAP or decentralized oracles (Chainlink).
+  - **Read-Only Reentrancy & Virtual Price Manipulation (MirrorLend / Curve pattern):**
+    - Occurs when a pool function (`removeLiquidity`) decreases `totalSupply` and sends ETH via `.call{value: ...}("")` *before* transferring out other ERC20 tokens.
+    - During the intermediate callback, `token.balanceOf(pool)` is still high while `totalSupply` is already reduced, artificially spiking `get_virtual_price() = (balance + tokens) / totalSupply`.
+    - Exploitation: Deposit small collateral into a lending protocol using that pool's `get_virtual_price()`, trigger `removeLiquidity()`, borrow the maximum inflated debt inside the `receive()` callback, and let the transaction finish. The final collateral value normalizes while `totalDebt` remains permanently higher, rendering the protocol undercollateralized.
   - **Compiler Bugs (Vyper / Solc):** Vyper `concat()` leading byte overwrite (CVE-2024-22419), ABI decoding dynamic array negative offset read (CVE-2024-26149).
 
 ---

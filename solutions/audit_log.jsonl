@@ -1,0 +1,5 @@
+{"timestamp": "2026-09-09T16:59:20Z", "challenge": "sample_rev_keygen", "category": "rev", "tool": "z3_solver", "flag": "flag{z3_s0vlrk3y_vq1!}", "status": "solved", "elapsed_seconds": 0.01}
+{"timestamp": "2026-09-10T06:37:37Z", "challenge": "super_ctf_land", "category": "forensics", "tool": "pyboy_emulator", "flag": "ctf{h@xertym}", "alt_flag": "byuctf{h@xertym}", "status": "solved", "elapsed_seconds": 0.28}
+{"timestamp": "2026-09-10T12:11:49.780030Z", "challenge": "meridian_logs", "tool": "meridian_logs_solve_py", "flag": "COE-CS{01-06_07-13_20-23}"}
+{"timestamp": "2026-09-10T12:14:25.349237+00:00", "challenge": "meridian_bank", "tool": "meridian_bank_solve_py", "flag": "COE-CS{R. Specter_4827-WGHL-002}"}
+{"timestamp": 1790399889.385913, "challenge": "mirror_pool", "category": "web3", "flag": "H7CTF{e2388a60-6b5c-4b62-87a2-a54e00341269}", "status": "solved", "tool": "solutions/mirror_pool/solve.py"}
