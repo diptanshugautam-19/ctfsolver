@@ -333,3 +333,17 @@ ew File(baseDir, path)) without canonicalization.
   - In the custom extension DER encoding, supply the canonical tag as `False` (`0x87 01 00`) to pass validation sanity checks, while supplying the calculated relative tag as `True` (`0x88 01 01`).
   - Both tags are preserved in ascending order in the DER SEQUENCE. The parser validates the canonical field, but reads the authorization state from the shifted tag, successfully enrolling at the elevated / enterprise tier.
 
+---
+
+## 23. Solana Web3: Liquidation Denial of Service via Compute Budget Exhaustion
+* **Vulnerability Class:** Unbounded Loop Execution in Solana Smart Contracts.
+* **Mechanism & Pitfall:**
+  - In Solana lending protocols, liquidation logic typically verifies position health by summing collateral value and debt across all open positions in an obligation account.
+  - Transactions on Solana operate under a strict Compute Unit (CU) budget (default 200,000 CU, maximum 1,400,000 CU).
+  - If a protocol allows users to batch-open positions (`Ix::OpenMany`) where zero collateral and zero debt satisfy the health constraint ($0 \le 0 \cdot \text{LTV}$), an attacker borrower anticipating liquidation can pad the obligation with thousands of zero-cost positions.
+* **Exploitation Pattern:**
+  - Identify batch position opening functions without strict upper bounds on individual transactions.
+  - Submit `OpenMany` with `count = 10000` (collateral=0, debt=0).
+  - When the market price drops and the borrower becomes underwater, keeper bots attempting to trigger `Ix::Liquidate` exhaust their compute budget inside the loop over positions ($O(N)$ SBF operations), causing the liquidation transaction to revert.
+  - The collateral cannot be seized, resulting in permanent default without clawback.
+

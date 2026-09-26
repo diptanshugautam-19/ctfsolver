@@ -1,4 +1,4 @@
 Description
-H7 Passport is our passwordless SSO. Staff tap a passkey and they are in. The admin console behind it only opens for enterprise-attested authenticators, the corporate hardware the portal already trusts.
+perpguard is a solana lending market: post collateral, open positions, borrow.
 
-Open the admin console.  https://web-d83cf58e26d1e625.web.h7tex.com
+you're a borrower who plans to default, and your collateral is about to be marked down. end up underwater on a loan no keeper can ever claw back.   nc web3.h7tex.com 43215

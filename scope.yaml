@@ -29,7 +29,7 @@ challenges:
     port: 40718
   perpguard:
     host: "web3.h7tex.com"
-    port: 41557
+    port: 43215
   vouchsafe:
     host: "web-d83cf58e26d1e625.web.h7tex.com"
     port: 443
