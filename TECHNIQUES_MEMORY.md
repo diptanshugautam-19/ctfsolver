@@ -143,3 +143,9 @@ This file serves as the long-term memory for techniques, patterns, and lessons l
 * **Wireless & RF Protocols:**
   - **Bluetooth Low Energy (BLE):** GATT profile, Services, Characteristics, Descriptors. Enumeration via `bleah`, `gatttool -b <MAC> -I`, `bluetoothctl`, or Python `bleak`. Attack vectors: unauthenticated read/write characteristics, replay of authorization handles.
   - **SDR / Sub-GHz RF:** RTL-SDR, HackRF, GNU Radio, URH (Universal Radio Hacker), Inspectrum. Modulations: AM/ASK, OOK (On-Off Keying for rolling codes/garage doors), FM/FSK, PSK.
+  - **OOK / PWM Rolling-Code Analysis & Baseband Demodulation:**
+    - *Demodulation:* Ingest interleaved complex float32 I/Q (`.cf32`), compute magnitude envelope $A = \sqrt{I^2 + Q^2}$, threshold into binary states.
+    - *Symbol Extraction:* Identify pulse-width modulation (PWM) where symbol duration is constant (e.g., $1.0\text{ ms} = 1000\text{ samples}$) and high time indicates bit value (e.g., $300\ \mu\text{s} \to 0$, $600\ \mu\text{s} \to 1$).
+    - *Frame Alignment:* Segment burst by inter-frame idle periods ($> 1.5\text{ ms}$). Look for $N$-bit payload + trailing stop pulse.
+    - *Rolling Counter & Checksum Recovery:* Compare frames vertically. Static bits represent Remote ID / Serial (e.g., 32-bit `24ae4909`). Changing bytes reveal counter progression (e.g., $+7$ linear delta) and trailing checksums/CRCs (e.g. nibble sum modulo 15 or linear offset $\sum \text{nibbles} - 56$). Predict next frame without key recovery.
+
