@@ -3,7 +3,7 @@ challenge: genesis_vault
 category: web3
 techniques: [erc4626-inflation-attack, share-rounding-to-zero, donation-sync-manipulation]
 time_to_flag: 10
-status: verified_local
+status: solved
 ---
 
 # Genesis Vault — Solution & Vulnerability Analysis
@@ -48,3 +48,11 @@ The challenge implements a classic ERC-4626 style vault (`GenesisVault.sol`) sus
 
 ## 3. Exploit Implementation
 The attack is implemented both as a standalone atomic Solidity contract (`Exploit.sol`) and an automated Web3 solver (`solve.py` / `test_local.py`).
+
+## 4. Live Verification & Flag
+- **Target URL:** `https://web-456612f6ee2752d5.web.h7tex.com`
+- **Setup Address:** `0xc317023A7Ef8760557eC3cE108E5e734c2454978`
+- **Private Key:** `0x65674efc7b995edae074c37ae2da9370dd5244e913d39981bad20cb6bf1d4343`
+- **Attack Tx:** Confirmed in Block 4
+- **Flag:** `H7CTF{126f0334-38e4-4fe6-aa45-d12480380c3d}`
+
