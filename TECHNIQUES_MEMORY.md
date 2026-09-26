@@ -115,7 +115,10 @@ This file serves as the long-term memory for techniques, patterns, and lessons l
 ## 11. Hardware, IoT & Embedded Security
 * **Serial & Bus Protocols:**
   - **UART:** Asynchronous serial (TX/RX, GND). Framing: Start bit (0), 5-9 data bits (usually 8 LSB-first), optional parity bit, 1-2 stop bits (1). Baud rate detection: measure shortest pulse width $\Delta t$, Baud $\approx 1/\Delta t$ (common: 9600, 19200, 38400, 57600, 115200).
+    - *Raw Bitstream Parsing:* Idle line = 1. Transition 1 $\to$ 0 signals Start bit. Collect $N$ bits, reverse slice (`[::-1]` for LSB-first), verify parity (`sum(bits) % 2 == 0` for even), discard stop bit.
   - **I2C:** Synchronous 2-wire serial (SDA data, SCL clock, pull-up resistors). Addressing: 7-bit or 10-bit address + R/W bit (0=Write, 1=Read), followed by ACK (0) / NACK (1).
+    - *Hardware Address Hijacking:* Slave address format (e.g. PCF8574 `0100[A2][A1][A0]`). If target IC has pull-up/down resistors on address lines, overpower the address pin using an attached module's GPIO to forcibly reassign the original chip's I2C ID, preventing slave address collisions when spoofing the bus device.
+    - *4x4 Matrix Keypad Scanning (I2C I/O Expander):* MCU drives row scan `0xF0` (columns high, row pulled low `0xE0, 0xD0, 0xB0, 0x70`), then column scan `0x0F` (rows high, column pulled low `0x0E, 0x0D, 0x0B, 0x07`). Simulated keypress sends corresponding pattern pairs.
   - **SPI:** Synchronous 4-wire serial (MOSI, MISO, SCK, CS/SS active low). Clock polarity (CPOL) and phase (CPHA) determine sampling edges (Modes 0 to 3).
   - **JTAG / SWD:** IEEE 1149.1 test access port (TMS, TCK, TDI, TDO, TRST) and ARM Serial Wire Debug (SWDIO, SWCLK). Used for hardware debugging, boundary scans, reading device IDs (`IDCODE`), dumping internal flash/SRAM, and runtime memory patching.
   - **Wiegand Protocol:** Access control cards and keypads. 2-wire interface (DATA0 / Green, DATA1 / White). Falling edge on DATA0 = bit 0, DATA1 = bit 1. Formats: 26-bit standard (leading even parity, 8-bit facility code, 16-bit card ID, trailing odd parity), 4-bit / 8-bit BCD per keypress. Decode with PulseView / Sigrok or transition timestamp analysis.
@@ -123,10 +126,15 @@ This file serves as the long-term memory for techniques, patterns, and lessons l
 * **Logic Analyzers & Waveform Forensics:**
   - Tools: Saleae Logic 2 (`.sal`), Sigrok / PulseView (`.sr`, `.vcd`, `.csv`).
   - Waveform parsing: Convert VCD (Value Change Dump) or CSV timestamped transitions to digital state streams using Python (`vcdvcd` or regex transition finders).
-* **Firmware Extraction & Analysis:**
-  - **Flash Memory Dumping:** SPI Flash chips (Winbond W25Qxx, etc.) dumped via Bus Pirate, TeensyPirate, CH341A programmer, or flashrom (`flashrom -p ch341a_spi -r dump.bin`).
+* **Firmware & Non-Volatile Memory (NOR Flash):**
+  - **Flash Memory Dumping & Modification (Winbond W25Qxx SPI NOR Flash):**
+    - Commands: `0x03` (Read Data + 24-bit addr), `0x06` (Write Enable / WREN), `0x20` (Sector Erase 4KB + 24-bit addr), `0x02` (Page Program $\le$ 256 bytes + 24-bit addr), `0x05` (Read Status Register, poll WIP bit 0 $\to$ 0).
+    - *Hardware Write Invariant:* NOR flash programming can only flip bits from $1 \to 0$. To overwrite non-$0\text{xFF}$ data (e.g. hash modification), you must: (1) read the full 4KB sector, (2) patch data in memory, (3) execute `WREN` + Sector Erase `0x20` to reset all bytes to `0xFF`, (4) execute `WREN` + Page Program `0x02` in 256-byte chunks.
   - **Firmware Inspection:** `binwalk -Me firmware.bin` (carve SquashFS, CramFS, JFFS2, UBI, raw Linux kernels).
-  - **Microcontroller Architectures:** ARM (Thumb/ARM mode), MIPS (MIPS32/64, Big/Little endian - check opcode `0x03e00008` `jr $ra`), RISC-V (RV32I/RV64I, CH32V003), AVR (ATmega328P/Arduino).
+  - **Microcontroller Architectures & CPU Hardware Bugs:**
+    - **MOS 6502:** Reset vector at `$FFFC-$FFFD` loads startup PC.
+    - *`JMP ($xxFF)` Bug:* In indirect jumps where address ends in `$FF`, the MSB is erroneously fetched from `$xx00` instead of `$(xx+1)00` due to 8-bit page counter non-carry. Bypass by staging vector into internal RAM and jumping indirect without crossing page boundaries.
+    - **ARM / MIPS / RISC-V:** ARM (Thumb/ARM mode), MIPS (MIPS32/64, Big/Little endian - check opcode `0x03e00008` `jr $ra`), RISC-V (RV32I/RV64I, CH32V003), AVR (ATmega328P/Arduino).
   - **Emulation:** QEMU user space (`qemu-arm-static`, `qemu-mips-static`, `qemu-riscv32-static`).
 * **Fault Injection & Side-Channel Analysis (SCA):**
   - **Power Analysis:** Simple Power Analysis (SPA) & Correlation Power Analysis (CPA) targeting AES S-Box substitutions ($H(k) = HW(SBOX(p \oplus k))$) or RSA modular exponentiation (square-and-multiply leakage).
