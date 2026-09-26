@@ -1,3 +1,3 @@
-Sparrow Freight dispatch takes your waybill number, logs it, and waves you off. Trouble is, the intake clerk never learned when to stop listening.
+Sparrow Freight keeps its cargo manifest under admin clearance, which is not something they planned on giving you. Good thing the terminal loves feedback and takes your every word to heart.
 
-No spare key was left out this time, so bring your own way in.   nc pwn.h7tex.com 42423
+Some of us are just destined for management.  nc pwn.h7tex.com 42332

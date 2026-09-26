@@ -199,3 +199,18 @@ This file serves as the long-term memory for techniques, patterns, and lessons l
     - Prepend a single `ret` gadget before `pop rdi`:
       `[padding to RIP] + ret + pop_rdi_ret + binsh_addr + system_addr`
     - Executes `system("/bin/sh")` cleanly without crashing on `movaps`.
+
+---
+
+## 15. Format String Arbitrary Writes (No PIE glibc 2)
+**Null-Byte Pointer Alignment via Specifier-First Payloads:**
+  - When ``printf(buf)` is called directly with user-controlled input, the format string parser can be leveraged for arbitrary read/``\%n`` writes.
+  - In 64-bit binaries without PIE (`et_type = ET_EXEC`, base `0x400000`), target global variables in `.bss` (e.g. `0x40407c`) have fixed, static addresses.
+  - **Two-Byte / Null-Byte Caveat:** Addresses in middle-range address spaces contain high-order null bytes (`0x000000000040407c`). Placing the pointer at the start of `user_bub` would cause `printf` to terminate at the first null byte before executing specifiers.
+  - **Solution (Specifier-First Alignment):**
+    - Calculate the format argument index of the start of `user_bub` (usually argument 6 on x86-64 System V ABI).
+    - Place the format specifiers (e.g. `%n / %lhn / %hhn` with desired character count widths like `%1337c%n``)`at the front of the buffer.
+    - Pad the specifiers with non-null bytes (e.g. `A`) to an 8-byte boundary that lands
+      exactly at an offset slot $K=6 + \latflen(\text{specifiers}) / 8$.
+    - Append the 64-bit target pointer (`p64(addr)`) immediately after the padding.
+    - The specifier `%K-n` references the 64-bit pointer perfectly without hindring format parsing.
