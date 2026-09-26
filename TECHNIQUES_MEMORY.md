@@ -299,3 +299,37 @@ ew File(baseDir, path)) without canonicalization.
     - Byte 0: Packet length L (number of payload bytes).
     - Bytes 1..L: Payload data (ASCII text, flags, sensor data).
     - Trailing 2 bytes: CRC-16-CCITT (polynomial 0x1021, init 0xFFFF) calculated over [length + payload].
+
+---
+
+## 21. Hardware Side-Channel Analysis: Correlation Power Analysis (CPA) on AES-128
+* **Target Operation & Intermediate State:**
+  - In AES-128 encryption, Round 1 XORs plaintext $P$ with Round Key $K_0$, followed by SubBytes non-linear substitution:
+    $$Y_{n, i} = \text{SBox}(P_{n, i} \oplus K_i) \quad \text{for byte } i \in [0, 15], \text{ trace } n \in [0, N-1]$$
+* **Power Leakage Model:**
+  - Dynamic power dissipation in CMOS logic is dominated by bit switching (Hamming Distance) and bus/register charge states (Hamming Weight):
+    $$H_{k, n} = \text{HW}(\text{SBox}(P_{n, i} \oplus k)) \quad \text{for candidate } k \in [0, 255]$$
+* **Vectorized Pearson Correlation Coefficient:**
+  - Center the $N \times T$ trace matrix $T$ and $256 \times N$ hypothesis matrix $H$:
+    $$\tilde{T} = T - \bar{T}, \quad \sigma_T = \sqrt{\sum \tilde{T}^2}$$
+    $$\tilde{H} = H - \bar{H}, \quad \sigma_H = \sqrt{\sum \tilde{H}^2}$$
+  - Compute the correlation matrix via single matrix multiplication:
+    $$\rho = \frac{\tilde{H} \cdot \tilde{T}}{\sigma_H \cdot \sigma_T} \quad (256 \times T)$$
+  - For each byte $i$, select $\hat{k} = \arg\max_{k} \max_{t} |\rho_{k, t}|$.
+* **Diagnostic Indicators:**
+  - **Peak Magnitude:** Strong correlation peak ($|\rho| \ge 0.60$) decisively separates the true key byte from incorrect hypotheses ($|\rho| \le 0.20$).
+  - **Temporal Stride:** In microcontroller/smart-card software AES implementations, the S-box operations execute sequentially in a loop, resulting in equidistant sample peaks (e.g. $t_i = t_0 + i \cdot \Delta t$).
+
+---
+
+## 22. WebAuthn / FIDO2 Attestation Bypass: ASN.1 Tag Confusion & Relative Offset Bugs
+* **Vulnerability Class:** ASN.1 Context-Tag Confusion in Custom X.509 Certificate Extensions.
+* **Mechanism & Pitfall:**
+  - WebAuthn Relying Parties supporting enterprise / air-gapped authenticators often inspect custom certificate extensions (e.g. `AuthenticatorPolicy` carrying security tiers or `elevated` privileges).
+  - When parsers migrate from positional decoding to dynamic tag calculation relative to variable sections (like `aaguids SEQUENCE OF OCTET STRING`), bugs in tag offset calculations cause the parser to consult an adjacent context tag (e.g. Tag 8 instead of Tag 7) for authorization flags.
+  - Standard policy validators may reject direct assertion of elevated privileges on the canonical tag (`tag 7 = True` $\to$ `403 attestation rejected`).
+* **Exploitation Pattern:**
+  - Craft a self-signed X.509 attestation certificate with an AAGUID not listed in MDS3 (routing to legacy/self-enrolled parsing).
+  - In the custom extension DER encoding, supply the canonical tag as `False` (`0x87 01 00`) to pass validation sanity checks, while supplying the calculated relative tag as `True` (`0x88 01 01`).
+  - Both tags are preserved in ascending order in the DER SEQUENCE. The parser validates the canonical field, but reads the authorization state from the shifted tag, successfully enrolling at the elevated / enterprise tier.
+

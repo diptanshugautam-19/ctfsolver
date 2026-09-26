@@ -1,4 +1,4 @@
 Description
-A single burst went out over the air next to a device nobody can name. No datasheet, no protocol notes, not so much as a label on the case.
+H7 Passport is our passwordless SSO. Staff tap a passkey and they are in. The admin console behind it only opens for enterprise-attested authenticators, the corporate hardware the portal already trusts.
 
-Whatever it said, it only said once. Read it back.    https://web-372d030d5bcef7b1.web.h7tex.com
+Open the admin console.  https://web-d83cf58e26d1e625.web.h7tex.com

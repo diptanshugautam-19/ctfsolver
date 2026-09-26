@@ -1,0 +1,35 @@
+# CTF Target Scope Allowlist
+# Only hosts and networks explicitly declared here are permitted for automated connections.
+
+version: "1.0"
+
+# Global allowlist (e.g. localhost, local test ports)
+allowed_targets:
+  - host: "127.0.0.1"
+    ports: [1000-65535]
+  - host: "localhost"
+    ports: [1000-65535]
+
+# Challenge-specific endpoints (populated during challenges)
+challenges:
+  sandboxed:
+    host: "pwn.h7tex.com"
+    port: 43225
+  sorting_line:
+    host: "pwn.h7tex.com"
+    port: 41220
+  deskline:
+    host: "web-7b7730bbddb3fcb6.web.h7tex.com"
+    port: 443
+  feeswap:
+    host: "web3.h7tex.com"
+    port: 42583
+  dog_whistle:
+    host: "pwn.h7tex.com"
+    port: 40718
+  perpguard:
+    host: "web3.h7tex.com"
+    port: 41557
+  vouchsafe:
+    host: "web-d83cf58e26d1e625.web.h7tex.com"
+    port: 443
