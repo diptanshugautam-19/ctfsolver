@@ -1,0 +1,21 @@
+﻿# CTF Solver Guidelines & Heuristics
+
+## 1. Flag Detection Heuristics
+When inspecting any challenge file, output, network stream, or database response, proactively test for flags matching standard formats:
+- Default format: lag\{[^\s\{\}]+?\} or (?:[A-Za-z0-9_]+)?\{[^\s\{\}]+?\} (e.g. picoCTF\{...\}, CTF\{...\}, HTB\{...\})
+- Encoded forms to check automatically:
+  - Base64 strings decoding to flag prefixes
+  - Hex strings decoding to ASCII flags
+  - ROT13 / Caesar variations
+  - Repeated single-byte XOR outputs
+
+## 2. Structured Triage Workflow
+- **Identify file type**: Never trust extensions alone. Check file magic numbers (ile, xxd, or python header checks).
+- **String analysis**: Extract readable ASCII and Unicode strings (strings -a -n 6).
+- **Static analysis**: Disassemble/decompile logic, check symbols, extract embedded assets/archives (inwalk / oremost).
+- **Dynamic / Solver modeling**: When encountering mathematical checks, constraints, or keygen logic, prefer SMT modeling via z3-solver.
+
+## 3. Tooling Conventions
+- Store reusable scripts in 	ools/.
+- Organize individual challenges in dedicated subdirectories named after the challenge or category.
+- Keep clean solver scripts (solve.py) with descriptive comments and reproducible steps.

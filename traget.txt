@@ -1,4 +1,4 @@
-Description
-A retired key-custody vault shattered its root seed across a mesh of tiny guardian agents and lost the tool that glues them back. The re-attestation socket is still listening.
+https://e131a1ef-5712-worldoutter-e225a.mystery-challenges.webverselabs-pro.com/
 
-Put the seed back together and prove it to the socket.  https://web-986d60e27fd022f4.web.h7tex.com
+Briefing : 
+WorldOutter is a fantasy football platform where friends run a league: set your lineup, check the standings, follow the weekly scoreboard. Only the league commissioner can open the settings console.

@@ -1,0 +1,30 @@
+[package]
+name = "staking-pool"
+version = "0.1.0"
+edition = "2021"
+
+[lints.rust]
+unexpected_cfgs = { level = "allow", check-cfg = ['cfg(target_os, values("solana"))'] }
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "staking_pool"
+
+[dependencies]
+solana-program = "2.2"
+borsh = "0.10"
+borsh-derive = "0.10"
+
+[dev-dependencies]
+solana-program-test = "2.2.7"
+solana-sdk = "2.2.2"
+
+[profile.release]
+overflow-checks = true
+lto = "fat"
+codegen-units = 1
+
+[profile.release.build-override]
+opt-level = 3
+incremental = false
+codegen-units = 1

@@ -1,0 +1,11 @@
+services:
+  staking-pool:
+    build: .
+    ports:
+      - "5001:5001"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '1.0'

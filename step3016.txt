@@ -1,0 +1,52 @@
+<USER_REQUEST>
+Mission Description:
+Year 2189. The orbital arcology Meridian-7 keeps its accounts with the Midland Overseas Trust, the last human-controlled bank above the atmosphere. For six weeks a phantom account has bled credits into the dark between stations. The auditors called it a rounding error. They were wrong.
+
+Your unit intercepted a courier drone the night before it burned on re-entry. Inside the charred housing sat one storage cell, imaged on-site into the file you now hold. The courier answered to a stage name lifted from an old Earth songbook. The operative hid a transfer order inside the cell, wrapped in layer upon layer of obfuscation so a casual scan would see nothing but empty sectors and harmless pictures of animals.
+
+Command is certain of three things. The operative deleted the incriminating files but never wiped the drive. Nothing on the cell is what its name claims to be. And the final order is locked behind a passphrase the operative was arrogant enough to leave in plain sight among five code-names. Recover the six fragments below and you reconstruct the whole ghost-layer routing order before the next settlement window on August 2nd.     "C:\Users\USER\Downloads\image_Drone_SIFI.png"
+"C:\Users\USER\Downloads\A1_SIFI_Password.txt"  libarchive.so.13 is present, and it supports RAR5 (unless it's a "best" build without unrar codec — actually libarchive's rar5 reader is built-in, no external unrar needed, unlike rar (v4) which needs unrar). Let's use it via ctypes directly, or check for a bsdtar binary that links against it.
+
+I got the archive open and listed — and I found a real blocker, plus some useful signal. Let me walk you through exactly what I found and where I'm stuck.
+
+What's inside A1_SIFI.rar:
+
+A1_SIFI/A1_SIFi.001   → 16,018,046,976 bytes  (≈ 16 GB, uncompressed)
+
+So the archive really does contain a raw forensic disk image (.001 — a classic dd/EnCase split-image extension), and it's the thing the mission wants analyzed for deleted-but-tracked MFT entries.
+
+Where I'
+<truncated 8852 bytes>
+he real flags from real data instead of guessing.  "C:\Users\USER\Downloads\A1_SIFI.rar"   these are the all things that we have find these far anlyze everyhting and find the flagss            The recovery drone dumped the courier's storage as one raw stream with no container metadata. Before anything else, fingerprint the medium the way a court exhibit demands. The flag is the unique serial that identifies this exact volume lowercased, no separators, wrapped in the flag format.
+
+Expected Flag Format: COE-CS{Flag}
+
+Enter the Flag that you found
+Flag
+Command insists the operative deleted but never wiped. Prove it by counting exactly how many entries the filesystem still tracks yet has marked as gone. The flag encodes that count. Beware the decoys the count is of every deleted record the MFT still lists, not just the interesting ones.
+
+Expected Flag Format: COE-CS{Flag/number}
+
+example:
+COE-CS{20}
+
+Enter the Flag that you found
+Flag
+One deleted entry promises ordinary notes. Recover it, and prove at the byte level that it lies about itself. Reading its true content reveals the operative's own instruction for how the prize was locked. The flag names the disguise and the cipher.
+
+Expected Flag Format: COE-CS{X_masquerade_Y}
+
+Enter the Flag that you found
+Flag
+A file named for a strong modern cipher holds five gibberish strings. It is a decoy name; the operative used the oldest trick in the book. Break it, recover the five code-names, and identify the one that is really a passphrase. The flag is that single word
+
+Expected Flag Format: COE-CS{Flag}
+
+Enter the Flag that you found
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-09-10T17:15:54+05:30.
+</ADDITIONAL_METADATA>
+<USER_SETTINGS_CHANGE>
+The user changed setting `Model Selection` from Gemini 3.8 Flash (Low) to Gemini 3.8 Flash (High). No need to comment on this change if the user doesn't ask about it. If reporting what model you are, please use a human readable name instead of the exact string.
+</USER_SETTINGS_CHANGE>

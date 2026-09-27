@@ -58,4 +58,7 @@ Any AI working in this workspace must use these pre-built deterministic tools ra
 7. **Binary Exploitation Libraries & MCP Bridge:**
    - Libraries: `pwntools` and `ptrlib` installed and ready.
    - Live IDA Pro bridge: `tools/pcm` (MCP server for Hex-Rays decompiler, basic block graphs, and IDAPython).
+8. **Headless Browser & Web Automation (Chrome DevTools MCP):**
+   - MCP Server: `chrome-devtools-mcp`
+   - Use for: Client-side XSS validation, DOM inspection/snapshots, evaluating in-browser JavaScript, handling interactive web challenges, rendering verification, and network traffic inspection.
 

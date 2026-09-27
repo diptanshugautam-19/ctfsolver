@@ -1,0 +1,1 @@
+FLAG = b"H7CTF{https://archiv.infsec.ethz.ch/education/fs08/secsem/manger01.pdf}"

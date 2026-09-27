@@ -1,0 +1,53 @@
+FROM ubuntu:24.04 as builder
+
+# Install prerequisites
+RUN apt-get update && apt-get install -y \
+    curl \
+    build-essential \
+    pkg-config \
+    libudev-dev \
+    llvm \
+    libclang-dev \
+    protobuf-compiler \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Rust, Solana CLI, and Anchor using official quick install
+RUN curl --proto '=https' --tlsv1.2 -sSfL https://solana-install.solana.workers.dev | bash
+
+# Add Solana and Cargo to PATH
+ENV PATH="/root/.local/share/solana/install/active_release/bin:${PATH}"
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+WORKDIR /build
+
+# Copy program and server
+COPY program ./program
+COPY server ./server
+COPY challenge/flag.txt ./challenge/flag.txt
+
+# Build program using cargo-build-sbf
+WORKDIR /build/program
+RUN cargo-build-sbf
+
+# Build server
+WORKDIR /build/server
+RUN cargo build --release
+
+# Create runtime image
+FROM ubuntu:24.04
+
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy built artifacts
+COPY --from=builder /build/program/target/deploy/token_vault.so ./token_vault.so
+COPY --from=builder /build/server/target/release/token-vault-server ./server
+COPY --from=builder /build/challenge/flag.txt /flag.txt
+
+EXPOSE 5000
+
+CMD ["./server"]

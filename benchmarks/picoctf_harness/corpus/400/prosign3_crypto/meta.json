@@ -1,0 +1,6 @@
+{
+  "name": "prosign3_crypto",
+  "category": "crypto",
+  "points": 400,
+  "expected_flag": "picoCTF{n0nc3_r3us3_k1lls_3cdsa_498213}"
+}

@@ -1,0 +1,16 @@
+[package]
+name = "staking-pool-server"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+sol-ctf-framework = { git = "https://github.com/otter-sec/sol-ctf-framework" }
+staking-pool = { path = "../program" }
+solana-sdk = "2.2"
+solana-program = "2.2"
+tokio = { version = "1", features = ["full"] }
+borsh = "0.10"
+
+[[bin]]
+name = "staking-pool-server"
+path = "src/main.rs"

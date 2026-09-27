@@ -1,0 +1,16 @@
+[package]
+name = "vault-heist"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "vault_heist"
+
+[dependencies]
+solana-program = "2.2"
+borsh = "0.10"
+
+[dev-dependencies]
+solana-program-test = "2.2"
+solana-sdk = "2.2"

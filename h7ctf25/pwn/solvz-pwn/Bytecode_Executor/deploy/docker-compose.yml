@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  bytecode-executor:
+    build: .
+    image: bytecode-executor:latest
+    container_name: bytecode-executor
+    ports:
+      - "9999:9999"
+    restart: unless-stopped
+    cap_add:
+      - SYS_ADMIN
+      - SYS_CHROOT
+    security_opt:
+      - apparmor:unconfined
+    read_only: false
+    tmpfs:
+      - /tmp
+

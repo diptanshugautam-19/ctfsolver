@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  vault-heist:
+    build: .
+    ports:
+      - "5003:5003"
+    restart: unless-stopped
+    container_name: vault-heist-challenge
+    environment:
+      - RUST_LOG=info
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid,size=100M

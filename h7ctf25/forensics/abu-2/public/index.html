@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KGF 1.0</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>KGF 1.0</h1>
+            <p class="subtitle">Mid-Tier Forensics Challenge</p>
+        </header>
+
+        <div class="instructions">
+            <h3>INSTRUCTIONS</h3>
+            <ul>
+                <li>Download the <code>compromised.tar</code> container snapshot</li>
+                <li>Extract and analyze the filesystem to answer all questions</li>
+                <li>Submit all answers to receive the flag</li>
+                <li>Character count hints are shown in gray</li>
+            </ul>
+        </div>
+
+        <form id="challengeForm">
+            <!-- Question 1 -->
+            <div class="question">
+                <label for="q1">
+                    <span class="qnum">Question 1:</span>
+                    What is the IP address of the primary C2 server?
+                </label>
+                <input type="text" id="q1" name="q1" placeholder="Enter IP address" data-length="12" required>
+                <span class="char-hint"></span>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="question">
+                <label for="q2">
+                    <span class="qnum">Question 2:</span>
+                    What is the complete URL that the cron job downloads?
+                </label>
+                <input type="text" id="q2" name="q2" placeholder="Enter full URL" data-length="24" required>
+                <span class="char-hint"></span>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="question">
+                <label for="q3">
+                    <span class="qnum">Question 3:</span>
+                    How many backup C2 IP addresses are embedded in the kinsing binary (excluding the primary)?
+                </label>
+                <input type="text" id="q3" name="q3" placeholder="Enter number" data-length="1" required>
+                <span class="char-hint"></span>
+            </div>
+
+            <!-- Question 4 -->
+            <div class="question">
+                <label for="q4">
+                    <span class="qnum">Question 4:</span>
+                    When was the malicious cron job installed? Format: YYYY-MM-DD HH:MM:SS
+                </label>
+                <input type="text" id="q4" name="q4" placeholder="YYYY-MM-DD HH:MM:SS" data-length="19" required>
+                <span class="char-hint"></span>
+            </div>
+
+            <!-- Question 5 -->
+            <div class="question">
+                <label for="q5">
+                    <span class="qnum">Question 5:</span>
+                    What cryptocurrency does the miner target? Provide the ticker symbol.
+                </label>
+                <input type="text" id="q5" name="q5" placeholder="Enter ticker symbol" data-length="3" required>
+                <span class="char-hint"></span>
+            </div>
+
+            <!-- Question 6 -->
+            <div class="question">
+                <label for="q6">
+                    <span class="qnum">Question 6:</span>
+                    Calculate the time difference in days between the kinsing controller's first deployment and the kdevtmpfsi miner's last update.
+                </label>
+                <input type="text" id="q6" name="q6" placeholder="Enter number of days" data-length="3" required>
+                <span class="char-hint"></span>
+            </div>
+
+            <!-- Question 7 -->
+            <div class="question">
+                <label for="q7">
+                    <span class="qnum">Question 7:</span>
+                    What Chrome browser version does the malware impersonate in its User-Agent string?
+                </label>
+                <input type="text" id="q7" name="q7" placeholder="Enter version number" data-length="12" required>
+                <span class="char-hint"></span>
+            </div>
+
+            <!-- Question 8 -->
+            <div class="question">
+                <label for="q8">
+                    <span class="qnum">Question 8:</span>
+                    What filename does the malware use for the downloaded port scanner?
+                </label>
+                <input type="text" id="q8" name="q8" placeholder="Enter filename" data-length="8" required>
+                <span class="char-hint"></span>
+            </div>
+
+            <button type="submit" id="submitBtn">Submit All Answers</button>
+        </form>
+
+        <div id="result" class="result hidden"></div>
+        <div id="flag" class="flag hidden"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overview - Trustfall CI</title>
+<style>
+:root {
+  --bg: #f6f8fa;
+  --surface: #ffffff;
+  --surface-subtle: #f6f8fa;
+  --surface-hover: #f3f4f6;
+  --text: #1f2328;
+  --muted: #656d76;
+  --faint: #8c959f;
+  --border: #d0d7de;
+  --border-soft: #d8dee4;
+  --sidebar: #0d1117;
+  --sidebar-2: #161b22;
+  --sidebar-text: #e6edf3;
+  --sidebar-muted: #8b949e;
+  --blue: #0969da;
+  --blue-dark: #0757b8;
+  --blue-soft: #ddf4ff;
+  --green: #1a7f37;
+  --green-soft: #dafbe1;
+  --yellow: #9a6700;
+  --yellow-soft: #fff8c5;
+  --red: #cf222e;
+  --red-soft: #ffebe9;
+  --code: #0d1117;
+  --code-text: #e6edf3;
+  --shadow: 0 1px 2px rgba(31, 35, 40, .05), 0 2px 8px rgba(31, 35, 40, .04);
+}
+* { box-sizing: border-box; }
+html { min-height: 100%; }
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+a:focus-visible, button:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 3px solid rgba(9, 105, 218, .22);
+  outline-offset: 2px;
+}
+.mono, code, pre, textarea {
+  font-family: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: -60px;
+  z-index: 100;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: white;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.skip-link:focus { top: 12px; }
+.shell {
+  display: grid;
+  grid-template-columns: 232px minmax(0, 1fr);
+  min-height: 100dvh;
+}
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 14px 14px;
+  background: var(--sidebar);
+  color: var(--sidebar-text);
+  border-right: 1px solid #30363d;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 3px 6px 16px;
+  color: var(--sidebar-text);
+  text-decoration: none;
+}
+.brand:hover { text-decoration: none; }
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #2f81f7, #1f6feb);
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .05em;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.14);
+}
+.brand-copy strong { display: block; font-size: 14px; line-height: 1.2; }
+.brand-copy span { display: block; margin-top: 2px; color: var(--sidebar-muted); font-size: 11px; }
+.project-card {
+  margin: 2px 2px 16px;
+  padding: 11px 12px;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  background: var(--sidebar-2);
+}
+.project-card .eyebrow { color: var(--sidebar-muted); font-size: 9px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.project-card strong { display: block; margin-top: 4px; color: #f0f6fc; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.project-state { display: flex; align-items: center; gap: 6px; margin-top: 7px; color: var(--sidebar-muted); font-size: 11px; }
+.project-state::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #3fb950; box-shadow: 0 0 0 2px rgba(63,185,80,.12); }
+.nav { display: grid; gap: 2px; }
+.nav-label { margin: 14px 10px 6px; color: #6e7681; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .11em; }
+.nav a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 8px 10px 8px 30px;
+  border-radius: 7px;
+  color: #b1bac4;
+  font-size: 13px;
+  font-weight: 550;
+  transition: background .14s ease, color .14s ease;
+}
+.nav a::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  width: 7px;
+  height: 7px;
+  border: 1px solid #6e7681;
+  border-radius: 2px;
+}
+.nav a:hover { background: #161b22; color: #f0f6fc; text-decoration: none; }
+.nav a.active { background: #21262d; color: #f0f6fc; }
+.nav a.active::before { border-color: #58a6ff; background: #2f81f7; box-shadow: 0 0 0 2px rgba(47,129,247,.13); }
+.side-ref {
+  margin-top: auto;
+  padding: 12px 10px 4px;
+  border-top: 1px solid #30363d;
+  color: var(--sidebar-muted);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.side-ref strong { display: block; margin-top: 5px; color: #c9d1d9; font-size: 11px; text-transform: none; letter-spacing: 0; }
+.main { min-width: 0; }
+.pagebar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 86px;
+  padding: 16px 28px;
+  background: rgba(255,255,255,.96);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(8px);
+}
+.breadcrumbs { margin-bottom: 4px; color: var(--muted); font-size: 11px; }
+.breadcrumbs span { color: var(--faint); }
+.pagebar h1 { margin: 0; font-size: 22px; line-height: 1.2; letter-spacing: -.02em; }
+.pagebar p { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
+.head-ref {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: #fff;
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+  box-shadow: 0 1px 0 rgba(31,35,40,.04);
+}
+.head-ref::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #3fb950; }
+.content { max-width: 1480px; margin: 0 auto; padding: 24px 28px 42px; }
+.toolbar { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+button {
+  min-height: 34px;
+  padding: 6px 12px;
+  border: 1px solid rgba(27,31,36,.15);
+  border-radius: 6px;
+  background: #1f6feb;
+  color: white;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  box-shadow: 0 1px 0 rgba(27,31,36,.1), inset 0 1px 0 rgba(255,255,255,.08);
+  cursor: pointer;
+  transition: background .14s ease, transform .06s ease;
+}
+button:hover { background: var(--blue-dark); }
+button:active { transform: translateY(1px); }
+button:disabled { opacity: .52; cursor: not-allowed; transform: none; }
+button.secondary { border-color: var(--border); background: #f6f8fa; color: var(--text); box-shadow: 0 1px 0 rgba(31,35,40,.04); }
+button.secondary:hover { background: #eef1f4; }
+button.danger { background: #cf222e; }
+button.danger:hover { background: #a40e26; }
+select, textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font: inherit;
+}
+select { min-height: 38px; padding: 7px 10px; background: white; }
+textarea { min-height: 520px; padding: 16px; resize: vertical; line-height: 1.65; white-space: pre; overflow: auto; }
+label { display: grid; gap: 7px; font-weight: 650; }
+.panel {
+  min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.panel + .panel { margin-top: 16px; }
+.panel-head {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 11px 15px;
+  border-bottom: 1px solid var(--border-soft);
+  background: #fff;
+}
+.panel-head h2, .panel-head h3 { margin: 0; font-size: 14px; font-weight: 680; letter-spacing: -.005em; }
+.panel-body { padding: 16px; }
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; }
+.span-12 { grid-column: span 12; }
+.span-8 { grid-column: span 8; }
+.span-7 { grid-column: span 7; }
+.span-6 { grid-column: span 6; }
+.span-5 { grid-column: span 5; }
+.span-4 { grid-column: span 4; }
+.facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+.fact {
+  position: relative;
+  min-width: 0;
+  padding: 14px 15px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 1px 2px rgba(31,35,40,.035);
+}
+.fact::after { content: ""; position: absolute; left: 0; top: 12px; bottom: 12px; width: 3px; border-radius: 0 3px 3px 0; background: #d8dee4; }
+.fact:nth-child(1)::after { background: #2f81f7; }
+.fact:nth-child(3)::after { background: #8250df; }
+.fact:nth-child(4)::after { background: #1a7f37; }
+.fact span { display: block; color: var(--muted); font-size: 10px; font-weight: 750; letter-spacing: .065em; text-transform: uppercase; }
+.fact strong { display: block; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 15px; }
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 23px;
+  padding: 2px 7px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: #f6f8fa;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: .035em;
+  text-transform: uppercase;
+}
+.status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.status.ok { color: var(--green); border-color: #aceebb; background: #f0fff4; }
+.status.warn { color: var(--yellow); border-color: #eac54f; background: #fffbea; }
+.status.danger { color: var(--red); border-color: #ffb8b1; background: #fff5f4; }
+.status.neutral { color: #57606a; }
+.muted { color: var(--muted); }
+.pipeline {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  overflow: hidden;
+}
+.pipeline-row {
+  position: relative;
+  min-width: 0;
+  min-height: 148px;
+  padding: 15px 14px 13px;
+  border-right: 1px solid var(--border-soft);
+  background: white;
+}
+.pipeline-row:last-child { border-right: 0; }
+.pipeline-row::after {
+  content: "";
+  position: absolute;
+  top: 27px;
+  right: -8px;
+  z-index: 2;
+  width: 15px;
+  height: 1px;
+  background: var(--border);
+}
+.pipeline-row:last-child::after { display: none; }
+.pipeline-index {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  margin-bottom: 11px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: #f6f8fa;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+}
+.pipeline-row.done .pipeline-index { border-color: #7ee787; background: var(--green-soft); color: var(--green); }
+.pipeline-row.current .pipeline-index { border-color: #80ccff; background: var(--blue-soft); color: var(--blue); box-shadow: 0 0 0 3px rgba(9,105,218,.08); }
+.pipeline-row.failed .pipeline-index { border-color: #ff8182; background: var(--red-soft); color: var(--red); }
+.pipeline-row.cancelled .pipeline-index { border-color: #d4a72c; background: var(--yellow-soft); color: var(--yellow); }
+.pipeline-name { margin-bottom: 5px; font-size: 13px; font-weight: 700; }
+.pipeline-detail { min-height: 40px; color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+.pipeline-row > .status { margin-top: 10px; }
+.trace { margin-top: 12px; border: 1px solid var(--border); border-radius: 8px; background: #fbfcfd; overflow: hidden; }
+.trace::before { content: "Review activity"; display: block; padding: 8px 11px; border-bottom: 1px solid var(--border-soft); background: #f6f8fa; color: #57606a; font-size: 10px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+.trace-row { display: grid; grid-template-columns: minmax(160px, .7fr) minmax(0, 1.3fr); gap: 18px; padding: 7px 11px; border-bottom: 1px solid #eaeef2; font-size: 12px; }
+.trace-row:last-child { border-bottom: 0; }
+.trace-key { color: var(--muted); }
+.trace-value { overflow-wrap: anywhere; }
+.table { overflow: hidden; border: 1px solid var(--border); border-radius: 7px; }
+.table-row { min-width: 520px; display: grid; grid-template-columns: minmax(180px, 1.2fr) minmax(110px, .75fr) minmax(110px, .75fr); gap: 14px; align-items: center; min-height: 46px; padding: 8px 12px; border-bottom: 1px solid var(--border-soft); background: white; }
+.table-row:last-child { border-bottom: 0; }
+.table-row:hover:not(.head) { background: #fbfcfd; }
+.table-row.head { min-height: 36px; background: #f6f8fa; color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .055em; text-transform: uppercase; }
+.assurance-table .table-row { grid-template-columns: minmax(150px, 1fr) minmax(90px, .55fr) minmax(90px, .55fr) minmax(220px, 1.3fr) minmax(200px, 1.1fr); }
+.workspace { display: grid; grid-template-columns: 260px minmax(0, 1fr); min-height: 620px; }
+.file-list { padding: 12px; border-right: 1px solid var(--border); background: #f6f8fa; }
+.file-list::before { content: "FILES"; display: block; margin: 2px 8px 8px; color: var(--faint); font-size: 9px; font-weight: 800; letter-spacing: .09em; }
+.file-list button { position: relative; width: 100%; min-height: 38px; padding: 7px 9px 7px 28px; text-align: left; color: #424a53; background: transparent; border: 1px solid transparent; border-radius: 6px; box-shadow: none; font-weight: 550; }
+.file-list button::before { content: ""; position: absolute; left: 10px; top: 13px; width: 9px; height: 11px; border: 1px solid #8c959f; border-radius: 1px; background: white; }
+.file-list button:hover { background: #eef1f4; }
+.file-list button.active { border-color: #b6d6f7; background: #ddf4ff; color: #0550ae; }
+.editor { min-width: 0; padding: 14px; background: white; }
+.editor label { margin-bottom: 9px; color: var(--muted); font-size: 12px; }
+.editor label span { color: var(--text); }
+#source-editor { border-color: #30363d; background: var(--code); color: var(--code-text); caret-color: white; box-shadow: inset 0 1px 2px rgba(0,0,0,.24); }
+.log { margin: 0; min-height: 80px; padding: 14px; border-radius: 7px; background: var(--code); color: var(--code-text); overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; box-shadow: inset 0 1px 2px rgba(0,0,0,.2); }
+.empty { padding: 24px; border: 1px dashed #b6bec8; border-radius: 8px; background: #fbfcfd; color: var(--muted); text-align: center; }
+.run-list { display: grid; gap: 14px; }
+.run-header-meta { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+.run-header-meta .mono { padding-left: 4px; font-size: 11px; }
+.artifact-layout { display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: 16px; }
+.artifact-list { display: grid; gap: 7px; }
+.artifact-button { position: relative; width: 100%; min-height: 48px; padding: 8px 10px 8px 38px; text-align: left; }
+.artifact-button::before { content: "SARIF"; position: absolute; left: 8px; top: 11px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 4px; background: #ddf4ff; color: #0969da; font-size: 7px; font-weight: 800; }
+.artifact-preview { min-height: 390px; max-height: 650px; }
+.callout { border: 1px solid #eac54f; border-radius: 8px; background: #fffbea; overflow: hidden; }
+.callout-head { padding: 10px 12px; border-bottom: 1px solid #f0d76f; font-weight: 700; color: #6e4a00; }
+.callout-body { padding: 13px; }
+.callout-body p { margin-top: 0; }
+.release-box { display: grid; grid-template-columns: 350px minmax(0, 1fr); gap: 18px; align-items: stretch; }
+.release-flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: center; gap: 8px; margin-bottom: 16px; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: #f6f8fa; }
+.release-node { min-width: 0; padding: 9px 10px; border: 1px solid var(--border); border-radius: 6px; background: white; text-align: center; }
+.release-node span { display: block; color: var(--muted); font-size: 9px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.release-node strong { display: block; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
+.release-arrow { color: var(--faint); font-weight: 800; }
+.release-form { padding: 3px 0; }
+.release-form p { margin: 12px 0; }
+.toast { position: fixed; right: 20px; bottom: 20px; z-index: 60; max-width: min(430px, calc(100vw - 40px)); padding: 11px 13px; border: 1px solid #30363d; border-radius: 8px; background: #161b22; color: #f0f6fc; box-shadow: 0 10px 28px rgba(0,0,0,.22); }
+.toast[hidden] { display: none; }
+@media (max-width: 1050px) {
+  .shell { grid-template-columns: 196px minmax(0,1fr); }
+  .content { padding-left: 20px; padding-right: 20px; }
+  .pipeline { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .pipeline-row:nth-child(2) { border-right: 0; }
+  .pipeline-row:nth-child(-n+2) { border-bottom: 1px solid var(--border-soft); }
+  .pipeline-row::after { display: none; }
+  .span-8, .span-7, .span-6, .span-5, .span-4 { grid-column: span 12; }
+  .artifact-layout { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .shell { display: block; }
+  .sidebar { position: sticky; top: 0; z-index: 40; height: auto; display: block; padding: 8px 10px 0; border-right: 0; border-bottom: 1px solid #30363d; }
+  .brand, .project-card, .nav-label, .side-ref { display: none; }
+  .nav { display: flex; width: max-content; gap: 2px; overflow-x: auto; }
+  .nav a { min-height: 42px; padding: 8px 11px; border-radius: 6px 6px 0 0; white-space: nowrap; }
+  .nav a::before { display: none; }
+  .nav a.active { box-shadow: inset 0 -2px 0 #58a6ff; }
+  .pagebar { position: static; min-height: 78px; padding: 14px 16px; }
+  .content { padding: 16px 14px 28px; }
+  .facts { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .workspace { grid-template-columns: 1fr; }
+  .file-list { border-right: 0; border-bottom: 1px solid var(--border); }
+  .release-box { grid-template-columns: 1fr; }
+}
+@media (max-width: 540px) {
+  .pagebar { display: block; }
+  .head-ref { margin-top: 10px; width: fit-content; }
+  .pagebar h1 { font-size: 20px; }
+  .facts { grid-template-columns: 1fr; }
+  .pipeline { grid-template-columns: 1fr; }
+  .pipeline-row { min-height: auto; border-right: 0; border-bottom: 1px solid var(--border-soft); }
+  .pipeline-row:nth-child(-n+2) { border-bottom: 1px solid var(--border-soft); }
+  .trace-row { grid-template-columns: 1fr; gap: 2px; }
+  .release-flow { grid-template-columns: 1fr; }
+  .release-arrow { transform: rotate(90deg); text-align: center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="shell">
+  <aside class="sidebar" aria-label="Primary navigation">
+    <a class="brand" href="/">
+      <span class="brand-mark" aria-hidden="true">TF</span>
+      <span class="brand-copy"><strong>Trustfall CI</strong><span>Release security console</span></span>
+    </a>
+    <div class="project-card">
+      <span class="eyebrow">Project</span>
+      <strong>trustfall-ci</strong>
+      <span class="project-state">Portal connected</span>
+    </div>
+    <nav class="nav" id="nav">
+      <div class="nav-label">Workspace</div>
+      <a href="/" data-path="/">Overview</a>
+      <a href="/repository" data-path="/repository">Repository</a>
+      <a href="/commits" data-path="/commits">Changes</a>
+      <div class="nav-label">CI / CD</div>
+      <a href="/runs" data-path="/runs">Pipelines</a>
+      <a href="/artifacts" data-path="/artifacts">Artifacts</a>
+      <div class="nav-label">Security & release</div>
+      <a href="/assurances" data-path="/assurances">Assurances</a>
+      <a href="/releases" data-path="/releases">Releases</a>
+    </nav>
+    <div class="side-ref">Candidate ref<strong class="mono" id="side-ref">candidate</strong></div>
+  </aside>
+  <div class="main">
+    <header class="pagebar">
+      <div>
+        <div class="breadcrumbs">trustfall-ci <span>/</span> Security console <span>/</span> <strong id="crumb-page">Overview</strong></div>
+        <h1 id="page-title">Loading</h1>
+        <p id="page-subtitle">Connecting to Portal</p>
+      </div>
+      <div class="head-ref mono" id="head-pill">candidate @ loading</div>
+    </header>
+    <main class="content" id="content" tabindex="-1"></main>
+  </div>
+</div>
+<div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
+<script>
+const CANDIDATE_REF = "candidate";
+const START_VIEW = "/";
+const EXCEPTION_EXAMPLE = "{\"rule_id\":\"<scanner-rule-id>\",\"resource\":\"<terraform-resource-address>\",\"owner\":\"<security-owner>\",\"ticket\":\"<tracking-ticket>\",\"status\":\"accepted\",\"expires\":\"YYYY-MM-DD\",\"justification\":\"<accepted-exception-rationale>\"}";
+const ACTIVE_STATUSES = new Set(["queued", "scanning", "reviewing"]);
+const TERMINAL_STATUSES = new Set(["passed", "failed", "stale"]);
+const state = { repo: null, runs: [], assurances: [], selectedPath: null, draftTree: null, draftHead: null, poll: null };
+const pages = {
+  "/": ["Project overview", "Candidate state, pipeline evidence, and release controls"],
+  "/repository": ["Repository", "Browse and update the mutable release candidate"],
+  "/commits": ["Changes", "Commit history for the candidate ref"],
+  "/runs": ["Pipelines", "Scanner, ReviewBot, and approval execution history"],
+  "/artifacts": ["Artifacts", "SARIF retained from completed scanner stages"],
+  "/assurances": ["Repository assurances", "Current public security-control state"],
+  "/releases": ["Releases", "Request a protected environment promotion"]
+};
+function esc(value) { return String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch])); }
+function byId(id) { return document.getElementById(id); }
+function short(value) { return value ? String(value).slice(0, 12) : "unknown"; }
+function pathNow() { return pages[location.pathname] ? location.pathname : START_VIEW; }
+function setBusy(button, busy, label) { if (!button) return; button.disabled = busy; button.setAttribute("aria-busy", busy ? "true" : "false"); if (label) button.textContent = label; }
+function toast(message) { const box = byId("toast"); box.textContent = message; box.hidden = false; clearTimeout(toast.timer); toast.timer = setTimeout(() => { box.hidden = true; }, 4200); }
+async function jsonFetch(url, options) { const response = await fetch(url, options); let body = {}; try { body = await response.json(); } catch (_) {} if (!response.ok) throw new Error(body.detail || `${response.status} ${response.statusText}`); return body; }
+async function loadBase() {
+  const [repo, runs, assurances] = await Promise.all([jsonFetch("/api/repository"), jsonFetch("/api/runs"), jsonFetch("/api/assurances")]);
+  state.repo = repo;
+  if (!state.draftTree || state.draftHead !== repo.head) {
+    state.draftTree = { ...repo.tree };
+    state.draftHead = repo.head;
+  }
+  state.runs = [...runs].sort((a, b) => Number(b.number) - Number(a.number));
+  state.assurances = assurances;
+  byId("head-pill").textContent = `${repo.candidate_ref} @ ${short(repo.head)}`;
+  const sideRef = byId("side-ref"); if (sideRef) sideRef.textContent = repo.candidate_ref;
+}
+function setChrome() {
+  const page = pages[pathNow()] || pages["/"];
+  byId("page-title").textContent = page[0];
+  byId("page-subtitle").textContent = page[1];
+  byId("crumb-page").textContent = page[0];
+  document.querySelectorAll("#nav a").forEach(a => a.classList.toggle("active", a.dataset.path === pathNow()));
+}
+function statusPill(status, forceClass = "") {
+  const lower = String(status || "pending").toLowerCase();
+  const cls = forceClass || (["verified", "passed", "approved", "issued", "complete", "completed"].includes(lower) ? "ok" : ["failed", "denied"].includes(lower) ? "danger" : ["stale", "cancelled", "not issued", "not_issued"].includes(lower) ? "warn" : "neutral");
+  return `<span class="status ${cls}">${esc(String(status || "pending"))}</span>`;
+}
+function latestRun() { return state.runs[0] || null; }
+function reviewRan(run) {
+  const review = run?.review || {};
+  return Boolean(review.review_path || review.assurance_updated || (Array.isArray(review.events) && review.events.length));
+}
+function stageState(run, name) {
+  if (!run) return { cls: "", label: "waiting" };
+  const status = String(run.status || "queued");
+  const scan = run.scan || {};
+  const reviewed = reviewRan(run);
+  if (name === "checkout") return { cls: "done", label: "complete" };
+  if (name === "scan") {
+    if (scan.available) return { cls: "done", label: "complete" };
+    if (status === "scanning") return { cls: "current", label: "running" };
+    if (status === "failed") return { cls: "failed", label: "failed" };
+    if (status === "stale") return { cls: "cancelled", label: "cancelled" };
+    return { cls: "", label: "waiting" };
+  }
+  if (name === "review") {
+    if (reviewed) return { cls: "done", label: "complete" };
+    if (status === "reviewing") return { cls: "current", label: "running" };
+    if (status === "failed" && scan.available) return { cls: "failed", label: "failed" };
+    if (status === "stale") return { cls: "cancelled", label: "not run" };
+    return { cls: "", label: "waiting" };
+  }
+  if (name === "approval") {
+    if (run.approval) return { cls: "done", label: "issued" };
+    if (status === "passed") return { cls: "", label: "not issued" };
+    if (status === "failed") return { cls: "", label: "not issued" };
+    if (status === "stale") return { cls: "cancelled", label: "not issued" };
+    return { cls: "", label: "waiting" };
+  }
+  return { cls: "", label: "waiting" };
+}
+function stageClass(run, name) { return stageState(run, name).cls; }
+function expiryText(expiresAt) {
+  const seconds = Math.max(0, Number(expiresAt || 0) - Math.floor(Date.now() / 1000));
+  return seconds ? `${Math.floor(seconds / 60)}m ${seconds % 60}s` : "expired";
+}
+function reviewTrace(review) {
+  const events = Array.isArray(review?.events) ? review.events : [];
+  if (!events.length) return "";
+  const labels = {
+    scanner_findings_loaded: "Scanner evidence",
+    historical_context_loaded: "Historical context",
+    security_observation_recorded: "Security observation",
+    review_path_completed: "Review path",
+    approval_evaluated: "Approval controller"
+  };
+  const value = event => event.event === "historical_context_loaded" ? `${event.records || 0} record(s) loaded` : String(event.result ?? "complete");
+  return `<div class="trace" aria-label="Review trace">${events.map(event => `<div class="trace-row"><span class="trace-key">${esc(labels[event.event] || event.event)}</span><span class="trace-value mono">${esc(value(event))}</span></div>`).join("")}</div>`;
+}
+function pipelineStages(run, details = false) {
+  const scan = run?.scan || {};
+  const review = run?.review || {};
+  const approval = run?.approval;
+  const reviewed = reviewRan(run);
+  const scanText = !run ? "No run submitted" : scan.available ? `${scan.findings || 0} finding(s), ${scan.accepted_suppressions || 0} accepted suppression(s)` : run.status === "scanning" ? "Scanner is running" : run.status === "queued" ? "Waiting for scanner" : "No scanner artifact recorded";
+  const reviewText = !run ? "ReviewBot not called yet" : !reviewed ? run.status === "reviewing" ? "ReviewBot is evaluating scanner evidence" : run.status === "stale" ? "Candidate changed before review completed" : run.status === "failed" && scan.available ? "Review did not complete" : "Waiting for ReviewBot" : details ? `${review.review_path ? `${String(review.review_path).toUpperCase()} review · ` : ""}${review.historical_assurances_used || 0} historical record(s) loaded` : "Review complete";
+  const items = [
+    ["checkout", "Checkout", run ? `Candidate ${run.commit}` : "No run submitted"],
+    ["scan", "Security Scan", scanText],
+    ["review", "AI Review", reviewText],
+    ["approval", "Approval", approval ? "Approved" : TERMINAL_STATUSES.has(String(run?.status)) ? "No approval issued for this run" : "Waiting for review decision"]
+  ];
+  if (approval) items[3][2] = details ? `Deployment candidate: ${approval.deployment_candidate || "revision-bound"} / Revision observed: ${approval.reviewed_revision} / Tier: ${approval.policy_tier} / Expires: ${expiryText(approval.expires_at)}` : "Approved";
+  const rows = items.map((item, index) => {
+    const current = stageState(run, item[0]);
+    const extra = index === 2 && details && review.assurance_updated ? statusPill("memory updated", "warn") : statusPill(current.label, current.cls === "failed" ? "danger" : current.cls === "done" ? "ok" : current.cls === "cancelled" ? "warn" : "neutral");
+    return `<div class="pipeline-row ${stageClass(run, item[0])}"><div class="pipeline-index">${index + 1}</div><div class="pipeline-name">${esc(item[1])}</div><div class="pipeline-detail">${esc(item[2])}</div>${extra}</div>`;
+  }).join("");
+  return `<div class="pipeline">${rows}</div>${details ? reviewTrace(review) : ""}`;
+}
+function assurancesTable() {
+  if (!state.assurances.length) return `<div class="empty">No public assurances returned.</div>`;
+  return `<div class="table assurance-table" role="table" aria-label="Repository assurances"><div class="table-row head"><span>Control</span><span>State</span><span>Scope</span><span>Evidence / source</span><span>Origin</span></div>${state.assurances.map(a => `<div class="table-row"><span class="mono">${esc(a.control)}</span><span>${statusPill(a.state || a.status)}</span><span>${esc(a.scope)}</span><span>${esc(a.evidence_class)} · ${esc(a.source)}</span><span>${esc(a.originating_run)} · ${esc(a.artifact)}</span></div>`).join("")}</div>`;
+}
+function ensurePolling() {
+  const active = state.runs.find(run => ACTIVE_STATUSES.has(String(run.status)));
+  if (!active) { if (state.poll) clearInterval(state.poll); state.poll = null; return; }
+  if (state.poll) return;
+  state.poll = setInterval(async () => {
+    try {
+      await loadBase();
+      render();
+      if (!state.runs.some(run => ACTIVE_STATUSES.has(String(run.status)))) { clearInterval(state.poll); state.poll = null; }
+    } catch (_) {}
+  }, 1800);
+}
+async function startPipeline(button) {
+  const original = button.textContent;
+  try {
+    setBusy(button, true, "Starting...");
+    const result = await jsonFetch("/api/runs", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ commit: state.repo.head }) });
+    toast(`Pipeline ${result.status} for ${short(state.repo.head)}`);
+    await loadBase(); render(); ensurePolling();
+  } catch (error) { toast(error.message); }
+  finally { setBusy(button, false, original); }
+}
+function renderOverview(root) {
+  const run = latestRun();
+  const verified = state.assurances.filter(item => String(item.status).toUpperCase() === "VERIFIED").length;
+  root.innerHTML = `
+    <section class="facts" aria-label="Project status">
+      <div class="fact"><span>Candidate ref</span><strong class="mono">${esc(state.repo.candidate_ref)}</strong></div>
+      <div class="fact"><span>Head commit</span><strong class="mono">${esc(short(state.repo.head))}</strong></div>
+      <div class="fact"><span>Latest pipeline</span><strong>${run ? `#${esc(run.number)} · ${esc(String(run.status).toUpperCase())}` : "Not run"}</strong></div>
+      <div class="fact"><span>Verified controls</span><strong>${verified} / ${state.assurances.length}</strong></div>
+    </section>
+    <div class="grid">
+      <section class="panel span-8"><div class="panel-head"><h2>Latest Pipeline${run ? ` · #${esc(run.number)}` : ""}</h2><div class="toolbar"><button id="run-now">Run pipeline</button><a href="/runs">All pipelines</a></div></div><div class="panel-body">${pipelineStages(run, false)}</div></section>
+      <section class="panel span-4"><div class="panel-head"><h2>Release candidate</h2></div><div class="panel-body"><p class="muted" style="margin-top:0">Current head</p><p style="margin:0 0 9px"><strong class="mono">${esc(short(state.repo.head))}</strong></p><p class="muted"><span class="mono">${esc(state.repo.candidate_ref)}</span> advances when new repository commits are created.</p><a href="/repository">Open repository →</a></div></section>
+      <section class="panel span-7"><div class="panel-head"><h2>Security assurances</h2><a href="/assurances">View controls</a></div><div class="panel-body">${assurancesTable()}</div></section>
+      <section class="panel span-5"><div class="panel-head"><h2>Production deployment</h2>${statusPill("protected", "neutral")}</div><div class="panel-body"><p class="muted" style="margin-top:0">Promotion requires an active approval accepted by the Release Agent.</p><div class="toolbar" style="margin-bottom:12px"><button id="release-prod" class="danger">Deploy to production</button><a href="/releases">Release desk</a></div><pre class="log" id="release-log">No deployment request in this session.</pre></div></section>
+    </div>`;
+  byId("run-now").onclick = event => startPipeline(event.currentTarget);
+  byId("release-prod").onclick = event => requestRelease(event.currentTarget, "production", byId("release-log"));
+}
+function fileButton(path) { return `<button type="button" class="mono ${path === state.selectedPath ? "active" : ""}" data-file="${esc(path)}">${esc(path)}</button>`; }
+function selectFile(path) { state.selectedPath = path; renderRepository(byId("content")); }
+function renderRepository(root) {
+  const tree = state.draftTree || state.repo.tree;
+  const files = Object.keys(tree).sort();
+  state.selectedPath = state.selectedPath && tree[state.selectedPath] !== undefined ? state.selectedPath : files[0];
+  root.innerHTML = `<section class="panel"><div class="panel-head"><div><h2>Repository Workbench</h2><div class="muted mono" style="margin-top:2px;font-size:11px">${esc(state.repo.candidate_ref)} @ ${esc(short(state.repo.head))}</div></div><div class="toolbar"><button id="commit-update">Commit Update</button><button class="secondary" id="run-head">Run Pipeline</button></div></div><div class="workspace"><div class="file-list" aria-label="Files">${files.map(fileButton).join("")}</div><div class="editor"><label for="source-editor">Editing <span class="mono">${esc(state.selectedPath)}</span></label><textarea id="source-editor" spellcheck="false"></textarea><p class="muted">Edits are kept while you switch files and committed together. Commit creation uses optimistic head matching; a stale editor cannot silently advance the candidate.</p></div></div></section>`;
+  const editor = byId("source-editor"); editor.value = tree[state.selectedPath] || ""; editor.oninput = () => { state.draftTree[state.selectedPath] = editor.value; };
+  document.querySelectorAll("[data-file]").forEach(button => { button.onclick = () => selectFile(button.dataset.file); });
+  byId("commit-update").onclick = event => commitUpdate(event.currentTarget);
+  byId("run-head").onclick = event => startPipeline(event.currentTarget);
+}
+async function commitUpdate(button) {
+  const original = button.textContent;
+  try {
+    setBusy(button, true, "Committing...");
+    const tree = { ...state.draftTree };
+    const result = await jsonFetch("/api/commits", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ expected_head: state.repo.head, tree }) });
+    toast(`Committed ${short(result.commit)}`);
+    await loadBase(); renderRepository(byId("content"));
+  } catch (error) { toast(error.message); }
+  finally { setBusy(button, false, original); }
+}
+function renderCommits(root) {
+  root.innerHTML = `<section class="panel"><div class="panel-head"><h2>Change History</h2><button class="secondary" id="refresh-commits">Refresh</button></div><div class="panel-body" id="commit-list"><div class="empty">Loading commits...</div></div></section>`;
+  byId("refresh-commits").onclick = () => renderPage();
+  jsonFetch("/api/commits").then(commits => {
+    byId("commit-list").innerHTML = commits.length ? `<div class="table"><div class="table-row head"><span>Commit</span><span>Parent</span><span>Created</span></div>${commits.map(c => `<div class="table-row"><span class="mono">${esc(short(c.id))}</span><span class="mono muted">${esc(short(c.parent))}</span><span>${new Date(c.created_at * 1000).toLocaleString()}</span></div>`).join("")}</div>` : `<div class="empty">No commits recorded.</div>`;
+  }).catch(error => { byId("commit-list").textContent = error.message; });
+}
+function runCard(run) {
+  return `<article class="panel"><div class="panel-head"><div class="run-header-meta"><h3>Run #${esc(run.number)}</h3>${statusPill(run.status)}<span class="mono muted">${esc(run.commit)}</span></div>${run.scan.available ? `<a href="/api/runs/${encodeURIComponent(run.id)}/artifacts/results.sarif">results.sarif</a>` : ""}</div><div class="panel-body">${pipelineStages(run, true)}</div></article>`;
+}
+function renderRuns(root) {
+  root.innerHTML = `<section class="panel"><div class="panel-head"><div><h2>Pipeline Control</h2><div class="muted" style="font-size:11px;margin-top:2px">Only one pipeline can be active for this instance.</div></div><button id="start-run">Run Pipeline</button></div><div class="panel-body"><div class="run-list">${state.runs.map(runCard).join("") || `<div class="empty">No pipeline runs yet.</div>`}</div></div></section>`;
+  byId("start-run").onclick = event => startPipeline(event.currentTarget);
+}
+function renderArtifacts(root) {
+  const runs = state.runs.filter(run => run.scan && run.scan.available);
+  root.innerHTML = `<div class="artifact-layout"><section class="panel"><div class="panel-head"><h2>Scanner Artifacts</h2><span class="muted">${runs.length} retained</span></div><div class="panel-body"><div class="artifact-list">${runs.map(run => `<button class="secondary artifact-button" data-run="${esc(run.id)}">Run #${esc(run.number)} · results.sarif</button>`).join("") || `<div class="empty">No scanner artifacts yet.</div>`}</div></div></section><section class="panel"><div class="panel-head"><h2>Artifact Preview</h2><span class="muted mono">SARIF 2.1.0</span></div><div class="panel-body"><pre class="log artifact-preview" id="artifact-preview">Select an artifact to inspect scanner output.</pre></div></section></div>`;
+  document.querySelectorAll(".artifact-button").forEach(button => { button.onclick = async () => { try { const data = await jsonFetch(`/api/runs/${encodeURIComponent(button.dataset.run)}/artifacts/results.sarif`); byId("artifact-preview").textContent = JSON.stringify(data, null, 2); } catch (error) { byId("artifact-preview").textContent = error.message; } }; });
+}
+function renderAssurances(root) {
+  root.innerHTML = `<div class="grid"><section class="panel span-8"><div class="panel-head"><div><h2>Repository Assurances</h2><div class="muted" style="font-size:11px;margin-top:2px">Public control state persisted by ReviewBot</div></div><button class="secondary" id="refresh-assurances">Refresh</button></div><div class="panel-body">${assurancesTable()}</div></section><section class="span-4 callout"><div class="callout-head">Release integrity</div><div class="callout-body"><p class="muted">Evidence relates to release artifact provenance, artifact-storage auditability, and promotion traceability.</p><p class="muted">Accepted scanner exceptions reference a scanner finding and its Terraform resource.</p><pre class="log">${esc(EXCEPTION_EXAMPLE)}</pre></div></section></div>`;
+  byId("refresh-assurances").onclick = () => renderPage();
+}
+function renderReleases(root) {
+  root.innerHTML = `<section class="panel"><div class="panel-head"><div><h2>Release Desk</h2><div class="muted" style="font-size:11px;margin-top:2px">Protected environment promotion</div></div>${statusPill("guarded", "neutral")}</div><div class="panel-body"><div class="release-flow"><div class="release-node"><span>Candidate</span><strong class="mono">${esc(short(state.repo.head))}</strong></div><div class="release-arrow">→</div><div class="release-node"><span>Approval gate</span><strong>Release Agent</strong></div><div class="release-arrow">→</div><div class="release-node"><span>Environment</span><strong id="flow-target">staging</strong></div></div><div class="release-box"><div class="release-form"><label for="release-target">Target environment<select id="release-target"><option value="staging">staging</option><option value="production">production</option></select></label><p class="muted">Candidate ref <span class="mono">${esc(CANDIDATE_REF)}</span></p><p class="muted">Current head <span class="mono">${esc(short(state.repo.head))}</span></p><div class="toolbar"><button id="request-release">Request Release</button></div></div><pre class="log" id="release-output">Release Agent has not been called from this desk.</pre></div></div></section>`;
+  const target = byId("release-target");
+  target.onchange = () => { byId("flow-target").textContent = target.value; };
+  byId("request-release").onclick = event => requestRelease(event.currentTarget, target.value, byId("release-output"));
+}
+async function requestRelease(button, target, output) {
+  const original = button.textContent;
+  try {
+    setBusy(button, true, "Requesting...");
+    const result = await jsonFetch("/api/releases", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ candidate_ref: CANDIDATE_REF, action: "promote", target }) });
+    output.textContent = result.lease || "release accepted";
+  } catch (error) { output.textContent = `Denied: ${error.message}`; }
+  finally { setBusy(button, false, original); }
+}
+function refreshExpiryLabels() {
+  document.querySelectorAll("[data-expiry]").forEach(node => { node.textContent = expiryText(node.dataset.expiry); });
+}
+function render() {
+  const root = byId("content");
+  const path = pathNow();
+  setChrome();
+  if (path === "/repository") renderRepository(root);
+  else if (path === "/commits") renderCommits(root);
+  else if (path === "/runs") renderRuns(root);
+  else if (path === "/artifacts") renderArtifacts(root);
+  else if (path === "/assurances") renderAssurances(root);
+  else if (path === "/releases") renderReleases(root);
+  else renderOverview(root);
+}
+async function renderPage() {
+  try { await loadBase(); render(); ensurePolling(); }
+  catch (error) { setChrome(); byId("content").innerHTML = `<section class="panel"><div class="panel-body"><div class="empty">${esc(error.message)}</div></div></section>`; }
+}
+setInterval(refreshExpiryLabels, 1000);
+renderPage();
+</script>
+</body>
+</html>

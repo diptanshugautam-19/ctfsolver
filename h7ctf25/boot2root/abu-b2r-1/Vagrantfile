@@ -1,0 +1,150 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  # Use Ubuntu 22.04 LTS
+  config.vm.box = "ubuntu/jammy64"
+  
+  # VM Configuration
+  config.vm.hostname = "mobydock"
+  config.vm.boot_timeout = 600
+  
+  # Synced folder
+  config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
+  
+  # Network Configuration
+  # Private network for SSH access
+  config.vm.network "private_network", ip: "192.168.56.10"
+  
+  # Port forwarding for services
+  # Docker API is intentionally NOT forwarded - only accessible via SSRF
+  config.vm.network "forwarded_port", guest: 8080, host: 8080  # Web Portal
+  config.vm.network "forwarded_port", guest: 22, host: 2223, id: "ssh"
+  
+  # VirtualBox specific settings
+  config.vm.provider "virtualbox" do |vb|
+    vb.name = "MobyDock-B2R"
+    vb.memory = "2048"
+    vb.cpus = 2
+    vb.gui = false
+    
+    # Enable nested virtualization for Docker-in-Docker
+    vb.customize ["modifyvm", :id, "--nested-hw-virt", "on"]
+    
+    # Additional settings for stability
+    vb.customize ["modifyvm", :id, "--uart1", "0x3F8", "4"]
+    vb.customize ["modifyvm", :id, "--uartmode1", "file", File::NULL]
+  end
+  
+  # Provisioning Scripts
+  
+  # 1. Update system and install basic tools
+  config.vm.provision "shell", name: "system-setup", inline: <<-SHELL
+    export DEBIAN_FRONTEND=noninteractive
+    
+    echo "[*] Updating system..."
+    apt-get update -qq
+    apt-get upgrade -y -qq
+    
+    echo "[*] Installing basic tools..."
+    apt-get install -y -qq \
+      curl \
+      wget \
+      git \
+      vim \
+      net-tools \
+      gcc \
+      make \
+      build-essential \
+      python3 \
+      python3-pip \
+      jq
+  SHELL
+  
+  # 2. Ensure network interface is up and configured
+  config.vm.provision "shell", name: "network-setup", inline: <<-SHELL
+    echo "[*] Configuring network interfaces..."
+    
+    # Bring up enp0s8 (host-only adapter) if it's down
+    if ! ip addr show enp0s8 | grep -q "inet 192.168.56.10"; then
+      echo "[*] Bringing up enp0s8 interface..."
+      ip link set enp0s8 up
+      
+      # Give it a moment to come up
+      sleep 2
+      
+      # Verify it's configured
+      if ip addr show enp0s8 | grep -q "inet 192.168.56.10"; then
+        echo "[✓] Network interface enp0s8 is up with IP 192.168.56.10"
+      else
+        echo "[!] Warning: enp0s8 may not be fully configured, attempting manual configuration..."
+        ip addr add 192.168.56.10/24 dev enp0s8 2>/dev/null || true
+      fi
+    else
+      echo "[✓] Network interface already configured"
+    fi
+    
+    # Make the configuration persistent
+    cat > /etc/netplan/99-custom.yaml << 'EOF'
+network:
+  version: 2
+  ethernets:
+    enp0s8:
+      dhcp4: false
+      addresses:
+        - 192.168.56.10/24
+EOF
+    
+    # Apply netplan configuration (will be used on next boot)
+    netplan apply 2>/dev/null || true
+    
+    echo "[✓] Network configuration complete"
+  SHELL
+  
+  # 3. Create users and place flags
+  config.vm.provision "shell", name: "user-setup", path: "provisioning/setup-users.sh"
+  
+  # 4. Configure system access
+  config.vm.provision "shell", name: "sudo-setup", path: "provisioning/setup-sudo.sh"
+  
+  # 5. Install Docker with exposed API
+  config.vm.provision "shell", name: "docker-setup", path: "provisioning/setup-docker.sh"
+  
+  # 6. Setup Docker privilege escalation environment
+  config.vm.provision "shell", name: "docker-privesc-setup", path: "provisioning/setup-docker-privesc.sh"
+  
+  # 7. Setup web portal (SSRF entry point)
+  config.vm.provision "shell", name: "web-setup", path: "provisioning/setup-web.sh"
+  
+  # 8. Setup API Gateway (internal service on port 8090)
+  config.vm.provision "shell", name: "api-gateway-setup", path: "provisioning/setup-api-gateway.sh"
+  
+  # 9. Setup KeePass database with SSH credentials (LAST - needs manual setup)
+  config.vm.provision "shell", name: "keepass-setup", path: "provisioning/setup-keepass-db.sh"
+  
+  # 10. Final hardening and cleanup
+  config.vm.provision "shell", name: "final-setup", inline: <<-SHELL
+    echo "[*] Final configuration..."
+    
+    # Disable some security features for CTF purposes
+    systemctl disable apparmor --now 2>/dev/null || true
+    
+    # Clear bash history
+    cat /dev/null > /root/.bash_history
+    history -c
+    
+    # Clear MOTD
+    cat /dev/null > /etc/motd
+    
+    echo "[✓] VM setup complete!"
+    echo "[✓] Docker API (firewalled): http://192.168.56.10:2375"
+    echo "[✓] Web Portal: http://192.168.56.10:8080"
+    echo "[✓] API Gateway (internal): http://localhost:8090"
+    echo "[✓] SSH: vagrant ssh"
+    echo ""
+    echo "[*] Challenge Services:"
+    echo "    - Port 8080: H7Corp DevOps Portal (SSRF vulnerability)"
+    echo "    - Port 8090: API Gateway (internal, enumerate via SSRF)"
+    echo "    - Port 2375: Docker API (firewalled, accessible via gateway)"
+  SHELL
+end

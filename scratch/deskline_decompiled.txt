@@ -1,0 +1,659 @@
+
+==================================================
+CLASS: Lcom/deskline/ApiClient$Resp;
+  METHOD: <init> ()V
+    invoke-direct v0, Ljava/lang/Object;-><init>()V
+    return-void 
+
+==================================================
+CLASS: Lcom/deskline/ApiClient;
+  METHOD: <init> ()V
+    invoke-direct v0, Ljava/lang/Object;-><init>()V
+    return-void 
+  METHOD: get (Ljava/lang/String; Ljava/util/Map;)Lcom/deskline/ApiClient$Resp;
+    new-instance v0, Ljava/net/URL;
+    invoke-direct v0, v2, Ljava/net/URL;-><init>(Ljava/lang/String;)V
+    invoke-virtual v0, Ljava/net/URL;->openConnection()Ljava/net/URLConnection;
+    move-result-object v2
+    check-cast v2, Ljava/net/HttpURLConnection;
+    const-string v0, "GET"
+    invoke-virtual v2, v0, Ljava/net/HttpURLConnection;->setRequestMethod(Ljava/lang/String;)V
+    const/16 v0, 8000
+    invoke-virtual v2, v0, Ljava/net/HttpURLConnection;->setConnectTimeout(I)V
+    invoke-virtual v2, v0, Ljava/net/HttpURLConnection;->setReadTimeout(I)V
+    if-eqz v3, +026h
+    invoke-interface v3, Ljava/util/Map;->entrySet()Ljava/util/Set;
+    move-result-object v3
+    invoke-interface v3, Ljava/util/Set;->iterator()Ljava/util/Iterator;
+    move-result-object v3
+    invoke-interface v3, Ljava/util/Iterator;->hasNext()Z
+    move-result v0
+    if-eqz v0, +018h
+    invoke-interface v3, Ljava/util/Iterator;->next()Ljava/lang/Object;
+    move-result-object v0
+    check-cast v0, Ljava/util/Map$Entry;
+    invoke-interface v0, Ljava/util/Map$Entry;->getKey()Ljava/lang/Object;
+    move-result-object v1
+    check-cast v1, Ljava/lang/String;
+    invoke-interface v0, Ljava/util/Map$Entry;->getValue()Ljava/lang/Object;
+    move-result-object v0
+    check-cast v0, Ljava/lang/String;
+    invoke-virtual v2, v1, v0, Ljava/net/HttpURLConnection;->setRequestProperty(Ljava/lang/String; Ljava/lang/String;)V
+    goto -1bh
+    invoke-static v2, Lcom/deskline/ApiClient;->read(Ljava/net/HttpURLConnection;)Lcom/deskline/ApiClient$Resp;
+    move-result-object v2
+    return-object v2
+  METHOD: post (Ljava/lang/String; Ljava/lang/String; Ljava/util/Map;)Lcom/deskline/ApiClient$Resp;
+    new-instance v0, Ljava/net/URL;
+    invoke-direct v0, v2, Ljava/net/URL;-><init>(Ljava/lang/String;)V
+    invoke-virtual v0, Ljava/net/URL;->openConnection()Ljava/net/URLConnection;
+    move-result-object v2
+    check-cast v2, Ljava/net/HttpURLConnection;
+    const-string v0, "POST"
+    invoke-virtual v2, v0, Ljava/net/HttpURLConnection;->setRequestMethod(Ljava/lang/String;)V
+    const/16 v0, 8000
+    invoke-virtual v2, v0, Ljava/net/HttpURLConnection;->setConnectTimeout(I)V
+    invoke-virtual v2, v0, Ljava/net/HttpURLConnection;->setReadTimeout(I)V
+    const-string v0, "Content-Type"
+    const-string v1, "application/json"
+    invoke-virtual v2, v0, v1, Ljava/net/HttpURLConnection;->setRequestProperty(Ljava/lang/String; Ljava/lang/String;)V
+    if-eqz v4, +026h
+    invoke-interface v4, Ljava/util/Map;->entrySet()Ljava/util/Set;
+    move-result-object v4
+    invoke-interface v4, Ljava/util/Set;->iterator()Ljava/util/Iterator;
+    move-result-object v4
+    invoke-interface v4, Ljava/util/Iterator;->hasNext()Z
+    move-result v0
+    if-eqz v0, +018h
+    invoke-interface v4, Ljava/util/Iterator;->next()Ljava/lang/Object;
+    move-result-object v0
+    check-cast v0, Ljava/util/Map$Entry;
+    invoke-interface v0, Ljava/util/Map$Entry;->getKey()Ljava/lang/Object;
+    move-result-object v1
+    check-cast v1, Ljava/lang/String;
+    invoke-interface v0, Ljava/util/Map$Entry;->getValue()Ljava/lang/Object;
+    move-result-object v0
+    check-cast v0, Ljava/lang/String;
+    invoke-virtual v2, v1, v0, Ljava/net/HttpURLConnection;->setRequestProperty(Ljava/lang/String; Ljava/lang/String;)V
+    goto -1bh
+    const/4 v4, 1
+    invoke-virtual v2, v4, Ljava/net/HttpURLConnection;->setDoOutput(Z)V
+    invoke-virtual v2, Ljava/net/HttpURLConnection;->getOutputStream()Ljava/io/OutputStream;
+    move-result-object v4
+    const-string v0, "UTF-8"
+    invoke-virtual v3, v0, Ljava/lang/String;->getBytes(Ljava/lang/String;)[B
+    move-result-object v3
+    invoke-virtual v4, v3, Ljava/io/OutputStream;->write([B)V
+    if-eqz v4, +005h
+    invoke-virtual v4, Ljava/io/OutputStream;->close()V
+    invoke-static v2, Lcom/deskline/ApiClient;->read(Ljava/net/HttpURLConnection;)Lcom/deskline/ApiClient$Resp;
+    move-result-object v2
+    return-object v2
+    move-exception v2
+    if-eqz v4, +00ah
+    invoke-virtual v4, Ljava/io/OutputStream;->close()V
+    goto +5h
+    move-exception v3
+    invoke-virtual v2, v3, Ljava/lang/Throwable;->addSuppressed(Ljava/lang/Throwable;)V
+    throw v2
+  METHOD: read (Ljava/net/HttpURLConnection;)Lcom/deskline/ApiClient$Resp;
+    new-instance v0, Lcom/deskline/ApiClient$Resp;
+    invoke-direct v0, Lcom/deskline/ApiClient$Resp;-><init>()V
+    invoke-virtual v6, Ljava/net/HttpURLConnection;->getResponseCode()I
+    move-result v1
+    iput v1, v0, Lcom/deskline/ApiClient$Resp;->code I
+    iget v1, v0, Lcom/deskline/ApiClient$Resp;->code I
+    const/16 v2, 400
+    if-lt v1, v2, +007h
+    invoke-virtual v6, Ljava/net/HttpURLConnection;->getErrorStream()Ljava/io/InputStream;
+    move-result-object v1
+    goto +5h
+    invoke-virtual v6, Ljava/net/HttpURLConnection;->getInputStream()Ljava/io/InputStream;
+    move-result-object v1
+    new-instance v2, Ljava/io/ByteArrayOutputStream;
+    invoke-direct v2, Ljava/io/ByteArrayOutputStream;-><init>()V
+    if-eqz v1, +011h
+    const/16 v3, 4096
+    new-array v3, v3, [B
+    invoke-virtual v1, v3, Ljava/io/InputStream;->read([B)I
+    move-result v4
+    if-lez v4, +007h
+    const/4 v5, 0
+    invoke-virtual v2, v3, v5, v4, Ljava/io/ByteArrayOutputStream;->write([B I I)V
+    goto -ah
+    const-string v1, "UTF-8"
+    invoke-virtual v2, v1, Ljava/io/ByteArrayOutputStream;->toString(Ljava/lang/String;)Ljava/lang/String;
+    move-result-object v1
+    iput-object v1, v0, Lcom/deskline/ApiClient$Resp;->body Ljava/lang/String;
+    invoke-virtual v6, Ljava/net/HttpURLConnection;->disconnect()V
+    return-object v0
+
+==================================================
+CLASS: Lcom/deskline/DeskDb;
+  METHOD: <init> (Landroid/content/Context;)V
+    const/4 v0, 0
+    const/4 v1, 1
+    const-string v2, "deskline.db"
+    invoke-direct v3, v4, v2, v0, v1, Landroid/database/sqlite/SQLiteOpenHelper;-><init>(Landroid/content/Context; Ljava/lang/String; Landroid/database/sqlite/SQLiteDatabase$CursorFactory; I)V
+    return-void 
+  METHOD: onCreate (Landroid/database/sqlite/SQLiteDatabase;)V
+    const-string v0, "CREATE TABLE tickets (id INTEGER PRIMARY KEY AUTOINCREMENT, subject TEXT, body TEXT)"
+    invoke-virtual v2, v0, Landroid/database/sqlite/SQLiteDatabase;->execSQL(Ljava/lang/String;)V
+    const-string v0, "CREATE TABLE credentials (id INTEGER PRIMARY KEY AUTOINCREMENT, label TEXT, value TEXT)"
+    invoke-virtual v2, v0, Landroid/database/sqlite/SQLiteDatabase;->execSQL(Ljava/lang/String;)V
+    return-void 
+  METHOD: onUpgrade (Landroid/database/sqlite/SQLiteDatabase; I I)V
+    return-void 
+  METHOD: seedFromSync (Ljava/lang/String;)V
+    new-instance v0, Lorg/json/JSONObject;
+    invoke-direct v0, v11, Lorg/json/JSONObject;-><init>(Ljava/lang/String;)V
+    invoke-virtual v10, Lcom/deskline/DeskDb;->getWritableDatabase()Landroid/database/sqlite/SQLiteDatabase;
+    move-result-object v11
+    const-string v1, "tickets"
+    const/4 v2, 0
+    invoke-virtual v11, v1, v2, v2, Landroid/database/sqlite/SQLiteDatabase;->delete(Ljava/lang/String; Ljava/lang/String; [Ljava/lang/String;)I
+    const-string v3, "credentials"
+    invoke-virtual v11, v3, v2, v2, Landroid/database/sqlite/SQLiteDatabase;->delete(Ljava/lang/String; Ljava/lang/String; [Ljava/lang/String;)I
+    invoke-virtual v0, v1, Lorg/json/JSONObject;->getJSONArray(Ljava/lang/String;)Lorg/json/JSONArray;
+    move-result-object v4
+    const/4 v5, 0
+    invoke-virtual v4, Lorg/json/JSONArray;->length()I
+    move-result v6
+    if-ge v5, v6, +023h
+    invoke-virtual v4, v5, Lorg/json/JSONArray;->getJSONObject(I)Lorg/json/JSONObject;
+    move-result-object v6
+    new-instance v7, Landroid/content/ContentValues;
+    invoke-direct v7, Landroid/content/ContentValues;-><init>()V
+    const-string v8, "subject"
+    invoke-virtual v6, v8, Lorg/json/JSONObject;->getString(Ljava/lang/String;)Ljava/lang/String;
+    move-result-object v9
+    invoke-virtual v7, v8, v9, Landroid/content/ContentValues;->put(Ljava/lang/String; Ljava/lang/String;)V
+    const-string v8, "body"
+    invoke-virtual v6, v8, Lorg/json/JSONObject;->getString(Ljava/lang/String;)Ljava/lang/String;
+    move-result-object v6
+    invoke-virtual v7, v8, v6, Landroid/content/ContentValues;->put(Ljava/lang/String; Ljava/lang/String;)V
+    invoke-virtual v11, v1, v2, v7, Landroid/database/sqlite/SQLiteDatabase;->insert(Ljava/lang/String; Ljava/lang/String; Landroid/content/ContentValues;)J
+    add-int/lit8 v5, v5, 1
+    goto -26h
+    const-string v1, "internal"
+    invoke-virtual v0, v1, Lorg/json/JSONObject;->getJSONObject(Ljava/lang/String;)Lorg/json/JSONObject;
+    move-result-object v0
+    new-instance v1, Landroid/content/ContentValues;
+    invoke-direct v1, Landroid/content/ContentValues;-><init>()V
+    const-string v4, "label"
+    invoke-virtual v0, v4, Lorg/json/JSONObject;->getString(Ljava/lang/String;)Ljava/lang/String;
+    move-result-object v5
+    invoke-virtual v1, v4, v5, Landroid/content/ContentValues;->put(Ljava/lang/String; Ljava/lang/String;)V
+    const-string v4, "value"
+    invoke-virtual v0, v4, Lorg/json/JSONObject;->getString(Ljava/lang/String;)Ljava/lang/String;
+    move-result-object v0
+    invoke-virtual v1, v4, v0, Landroid/content/ContentValues;->put(Ljava/lang/String; Ljava/lang/String;)V
+    invoke-virtual v11, v3, v2, v1, Landroid/database/sqlite/SQLiteDatabase;->insert(Ljava/lang/String; Ljava/lang/String; Landroid/content/ContentValues;)J
+    invoke-virtual v11, Landroid/database/sqlite/SQLiteDatabase;->close()V
+    return-void 
+
+==================================================
+CLASS: Lcom/deskline/MainActivity$1;
+  METHOD: <init> (Lcom/deskline/MainActivity;)V
+    iput-object v1, v0, Lcom/deskline/MainActivity$1;->this$0 Lcom/deskline/MainActivity;
+    invoke-direct v0, Ljava/lang/Object;-><init>()V
+    return-void 
+  METHOD: onClick (Landroid/view/View;)V
+    iget-object v2, v1, Lcom/deskline/MainActivity$1;->this$0 Lcom/deskline/MainActivity;
+    invoke-static v2, Lcom/deskline/MainActivity;->-$$Nest$fgetsession(Lcom/deskline/MainActivity;)Lcom/deskline/Session;
+    move-result-object v2
+    iget-object v0, v1, Lcom/deskline/MainActivity$1;->this$0 Lcom/deskline/MainActivity;
+    invoke-static v0, Lcom/deskline/MainActivity;->-$$Nest$fgetserverField(Lcom/deskline/MainActivity;)Landroid/widget/EditText;
+    move-result-object v0
+    invoke-virtual v0, Landroid/widget/EditText;->getText()Landroid/text/Editable;
+    move-result-object v0
+    invoke-virtual v0, Ljava/lang/Object;->toString()Ljava/lang/String;
+    move-result-object v0
+    invoke-virtual v0, Ljava/lang/String;->trim()Ljava/lang/String;
+    move-result-object v0
+    invoke-virtual v2, v0, Lcom/deskline/Session;->setBaseUrl(Ljava/lang/String;)V
+    iget-object v2, v1, Lcom/deskline/MainActivity$1;->this$0 Lcom/deskline/MainActivity;
+    invoke-static v2, Lcom/deskline/MainActivity;->-$$Nest$msync(Lcom/deskline/MainActivity;)V
+    return-void 
+
+==================================================
+CLASS: Lcom/deskline/MainActivity$2;
+  METHOD: <init> (Lcom/deskline/MainActivity; Ljava/lang/String;)V
+    iput-object v1, v0, Lcom/deskline/MainActivity$2;->this$0 Lcom/deskline/MainActivity;
+    iput-object v2, v0, Lcom/deskline/MainActivity$2;->val$base Ljava/lang/String;
+    invoke-direct v0, Ljava/lang/Object;-><init>()V
+    return-void 
+  METHOD: run ()V
+    new-instance v0, Ljava/util/HashMap;
+    invoke-direct v0, Ljava/util/HashMap;-><init>()V
+    const-string v1, "X-Deskline-Client"
+    const-string v2, "Deskline-Android/1.6.0"
+    invoke-virtual v0, v1, v2, Ljava/util/HashMap;->put(Ljava/lang/Object; Ljava/lang/Object;)Ljava/lang/Object;
+    new-instance v1, Lorg/json/JSONObject;
+    invoke-direct v1, Lorg/json/JSONObject;-><init>()V
+    const-string v2, "device_id"
+    iget-object v3, v7, Lcom/deskline/MainActivity$2;->this$0 Lcom/deskline/MainActivity;
+    invoke-static v3, Lcom/deskline/MainActivity;->-$$Nest$fgetsession(Lcom/deskline/MainActivity;)Lcom/deskline/Session;
+    move-result-object v3
+    invoke-virtual v3, Lcom/deskline/Session;->deviceId()Ljava/lang/String;
+    move-result-object v3
+    invoke-virtual v1, v2, v3, Lorg/json/JSONObject;->put(Ljava/lang/String; Ljava/lang/Object;)Lorg/json/JSONObject;
+    move-result-object v1
+    iget-object v2, v7, Lcom/deskline/MainActivity$2;->val$base Ljava/lang/String;
+    new-instance v3, Ljava/lang/StringBuilder;
+    invoke-direct v3, Ljava/lang/StringBuilder;-><init>()V
+    invoke-virtual v3, v2, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v2
+    const-string v3, "/api/v1/auth/device"
+    invoke-virtual v2, v3, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v2
+    invoke-virtual v2, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object v2
+    invoke-virtual v1, Lorg/json/JSONObject;->toString()Ljava/lang/String;
+    move-result-object v1
+    invoke-static v2, v1, v0, Lcom/deskline/ApiClient;->post(Ljava/lang/String; Ljava/lang/String; Ljava/util/Map;)Lcom/deskline/ApiClient$Resp;
+    move-result-object v0
+    iget v1, v0, Lcom/deskline/ApiClient$Resp;->code I
+    iget-object v2, v7, Lcom/deskline/MainActivity$2;->this$0 Lcom/deskline/MainActivity;
+    const-string v3, ")"
+    const/16 v4, 200
+    if-eq v1, v4, +01fh
+    iget v0, v0, Lcom/deskline/ApiClient$Resp;->code I
+    new-instance v1, Ljava/lang/StringBuilder;
+    invoke-direct v1, Ljava/lang/StringBuilder;-><init>()V
+    const-string v4, "Auth failed ("
+    invoke-virtual v1, v4, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v1
+    invoke-virtual v1, v0, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+    move-result-object v0
+    invoke-virtual v0, v3, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v0
+    invoke-virtual v0, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object v0
+    invoke-static v2, v0, Lcom/deskline/MainActivity;->-$$Nest$mpost(Lcom/deskline/MainActivity; Ljava/lang/String;)V
+    return-void 
+    invoke-static v2, Lcom/deskline/MainActivity;->-$$Nest$fgetsession(Lcom/deskline/MainActivity;)Lcom/deskline/Session;
+    move-result-object v1
+    new-instance v2, Lorg/json/JSONObject;
+    iget-object v0, v0, Lcom/deskline/ApiClient$Resp;->body Ljava/lang/String;
+    invoke-direct v2, v0, Lorg/json/JSONObject;-><init>(Ljava/lang/String;)V
+    const-string v0, "token"
+    invoke-virtual v2, v0, Lorg/json/JSONObject;->getString(Ljava/lang/String;)Ljava/lang/String;
+    move-result-object v0
+    invoke-virtual v1, v0, Lcom/deskline/Session;->setToken(Ljava/lang/String;)V
+    new-instance v0, Ljava/util/HashMap;
+    invoke-direct v0, Ljava/util/HashMap;-><init>()V
+    const-string v1, "Authorization"
+    iget-object v2, v7, Lcom/deskline/MainActivity$2;->this$0 Lcom/deskline/MainActivity;
+    invoke-static v2, Lcom/deskline/MainActivity;->-$$Nest$fgetsession(Lcom/deskline/MainActivity;)Lcom/deskline/Session;
+    move-result-object v2
+    invoke-virtual v2, Lcom/deskline/Session;->token()Ljava/lang/String;
+    move-result-object v2
+    new-instance v5, Ljava/lang/StringBuilder;
+    invoke-direct v5, Ljava/lang/StringBuilder;-><init>()V
+    const-string v6, "Bearer "
+    invoke-virtual v5, v6, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v5
+    invoke-virtual v5, v2, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v2
+    invoke-virtual v2, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object v2
+    invoke-virtual v0, v1, v2, Ljava/util/HashMap;->put(Ljava/lang/Object; Ljava/lang/Object;)Ljava/lang/Object;
+    iget-object v1, v7, Lcom/deskline/MainActivity$2;->val$base Ljava/lang/String;
+    new-instance v2, Ljava/lang/StringBuilder;
+    invoke-direct v2, Ljava/lang/StringBuilder;-><init>()V
+    invoke-virtual v2, v1, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v1
+    const-string v2, "/api/v1/sync"
+    invoke-virtual v1, v2, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v1
+    invoke-virtual v1, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object v1
+    invoke-static v1, v0, Lcom/deskline/ApiClient;->get(Ljava/lang/String; Ljava/util/Map;)Lcom/deskline/ApiClient$Resp;
+    move-result-object v0
+    iget v1, v0, Lcom/deskline/ApiClient$Resp;->code I
+    if-eq v1, v4, +021h
+    iget-object v1, v7, Lcom/deskline/MainActivity$2;->this$0 Lcom/deskline/MainActivity;
+    iget v0, v0, Lcom/deskline/ApiClient$Resp;->code I
+    new-instance v2, Ljava/lang/StringBuilder;
+    invoke-direct v2, Ljava/lang/StringBuilder;-><init>()V
+    const-string v4, "Sync failed ("
+    invoke-virtual v2, v4, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v2
+    invoke-virtual v2, v0, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+    move-result-object v0
+    invoke-virtual v0, v3, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v0
+    invoke-virtual v0, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object v0
+    invoke-static v1, v0, Lcom/deskline/MainActivity;->-$$Nest$mpost(Lcom/deskline/MainActivity; Ljava/lang/String;)V
+    return-void 
+    new-instance v1, Lcom/deskline/DeskDb;
+    iget-object v2, v7, Lcom/deskline/MainActivity$2;->this$0 Lcom/deskline/MainActivity;
+    invoke-direct v1, v2, Lcom/deskline/DeskDb;-><init>(Landroid/content/Context;)V
+    iget-object v0, v0, Lcom/deskline/ApiClient$Resp;->body Ljava/lang/String;
+    invoke-virtual v1, v0, Lcom/deskline/DeskDb;->seedFromSync(Ljava/lang/String;)V
+    const-string v0, "Queue synced"
+    goto +19h
+    move-exception v0
+    invoke-virtual v0, Ljava/lang/Exception;->getMessage()Ljava/lang/String;
+    move-result-object v0
+    new-instance v1, Ljava/lang/StringBuilder;
+    invoke-direct v1, Ljava/lang/StringBuilder;-><init>()V
+    const-string v2, "Error: "
+    invoke-virtual v1, v2, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v1
+    invoke-virtual v1, v0, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v0
+    invoke-virtual v0, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object v0
+    iget-object v1, v7, Lcom/deskline/MainActivity$2;->this$0 Lcom/deskline/MainActivity;
+    invoke-static v1, v0, Lcom/deskline/MainActivity;->-$$Nest$mpost(Lcom/deskline/MainActivity; Ljava/lang/String;)V
+    iget-object v0, v7, Lcom/deskline/MainActivity$2;->this$0 Lcom/deskline/MainActivity;
+    invoke-static v0, Lcom/deskline/MainActivity;->-$$Nest$mrenderTickets(Lcom/deskline/MainActivity;)V
+    return-void 
+
+==================================================
+CLASS: Lcom/deskline/MainActivity$3;
+  METHOD: <init> (Lcom/deskline/MainActivity; Ljava/lang/StringBuilder;)V
+    iput-object v1, v0, Lcom/deskline/MainActivity$3;->this$0 Lcom/deskline/MainActivity;
+    iput-object v2, v0, Lcom/deskline/MainActivity$3;->val$sb Ljava/lang/StringBuilder;
+    invoke-direct v0, Ljava/lang/Object;-><init>()V
+    return-void 
+  METHOD: run ()V
+    iget-object v0, v2, Lcom/deskline/MainActivity$3;->this$0 Lcom/deskline/MainActivity;
+    invoke-static v0, Lcom/deskline/MainActivity;->-$$Nest$fgettickets(Lcom/deskline/MainActivity;)Landroid/widget/TextView;
+    move-result-object v0
+    iget-object v1, v2, Lcom/deskline/MainActivity$3;->val$sb Ljava/lang/StringBuilder;
+    invoke-virtual v1, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object v1
+    invoke-virtual v0, v1, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
+    return-void 
+
+==================================================
+CLASS: Lcom/deskline/MainActivity$4;
+  METHOD: <init> (Lcom/deskline/MainActivity; Ljava/lang/String;)V
+    iput-object v1, v0, Lcom/deskline/MainActivity$4;->this$0 Lcom/deskline/MainActivity;
+    iput-object v2, v0, Lcom/deskline/MainActivity$4;->val$msg Ljava/lang/String;
+    invoke-direct v0, Ljava/lang/Object;-><init>()V
+    return-void 
+  METHOD: run ()V
+    iget-object v0, v2, Lcom/deskline/MainActivity$4;->this$0 Lcom/deskline/MainActivity;
+    invoke-static v0, Lcom/deskline/MainActivity;->-$$Nest$fgetstatus(Lcom/deskline/MainActivity;)Landroid/widget/TextView;
+    move-result-object v0
+    iget-object v1, v2, Lcom/deskline/MainActivity$4;->val$msg Ljava/lang/String;
+    invoke-virtual v0, v1, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
+    return-void 
+
+==================================================
+CLASS: Lcom/deskline/MainActivity;
+  METHOD: -$$Nest$fgetserverField (Lcom/deskline/MainActivity;)Landroid/widget/EditText;
+    iget-object v0, v0, Lcom/deskline/MainActivity;->serverField Landroid/widget/EditText;
+    return-object v0
+  METHOD: -$$Nest$fgetsession (Lcom/deskline/MainActivity;)Lcom/deskline/Session;
+    iget-object v0, v0, Lcom/deskline/MainActivity;->session Lcom/deskline/Session;
+    return-object v0
+  METHOD: -$$Nest$fgetstatus (Lcom/deskline/MainActivity;)Landroid/widget/TextView;
+    iget-object v0, v0, Lcom/deskline/MainActivity;->status Landroid/widget/TextView;
+    return-object v0
+  METHOD: -$$Nest$fgettickets (Lcom/deskline/MainActivity;)Landroid/widget/TextView;
+    iget-object v0, v0, Lcom/deskline/MainActivity;->tickets Landroid/widget/TextView;
+    return-object v0
+  METHOD: -$$Nest$mpost (Lcom/deskline/MainActivity; Ljava/lang/String;)V
+    invoke-direct v0, v1, Lcom/deskline/MainActivity;->post(Ljava/lang/String;)V
+    return-void 
+  METHOD: -$$Nest$mrenderTickets (Lcom/deskline/MainActivity;)V
+    invoke-direct v0, Lcom/deskline/MainActivity;->renderTickets()V
+    return-void 
+  METHOD: -$$Nest$msync (Lcom/deskline/MainActivity;)V
+    invoke-direct v0, Lcom/deskline/MainActivity;->sync()V
+    return-void 
+  METHOD: <init> ()V
+    invoke-direct v0, Landroid/app/Activity;-><init>()V
+    return-void 
+  METHOD: post (Ljava/lang/String;)V
+    new-instance v0, Lcom/deskline/MainActivity$4;
+    invoke-direct v0, v1, v2, Lcom/deskline/MainActivity$4;-><init>(Lcom/deskline/MainActivity; Ljava/lang/String;)V
+    invoke-virtual v1, v0, Lcom/deskline/MainActivity;->runOnUiThread(Ljava/lang/Runnable;)V
+    return-void 
+  METHOD: renderTickets ()V
+    new-instance v0, Ljava/lang/StringBuilder;
+    invoke-direct v0, Ljava/lang/StringBuilder;-><init>()V
+    new-instance v1, Lcom/deskline/DeskDb;
+    invoke-direct v1, v5, Lcom/deskline/DeskDb;-><init>(Landroid/content/Context;)V
+    invoke-virtual v1, Lcom/deskline/DeskDb;->getReadableDatabase()Landroid/database/sqlite/SQLiteDatabase;
+    move-result-object v1
+    const-string v2, "SELECT subject, body FROM tickets"
+    const/4 v3, 0
+    invoke-virtual v1, v2, v3, Landroid/database/sqlite/SQLiteDatabase;->rawQuery(Ljava/lang/String; [Ljava/lang/String;)Landroid/database/Cursor;
+    move-result-object v2
+    invoke-interface v2, Landroid/database/Cursor;->moveToNext()Z
+    move-result v3
+    if-eqz v3, +026h
+    const-string v3, "• "
+    invoke-virtual v0, v3, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v3
+    const/4 v4, 0
+    invoke-interface v2, v4, Landroid/database/Cursor;->getString(I)Ljava/lang/String;
+    move-result-object v4
+    invoke-virtual v3, v4, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v3
+    const-string v4, "
+    "
+    invoke-virtual v3, v4, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v3
+    const/4 v4, 1
+    invoke-interface v2, v4, Landroid/database/Cursor;->getString(I)Ljava/lang/String;
+    move-result-object v4
+    invoke-virtual v3, v4, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v3
+    const-string v4, "
+
+"
+    invoke-virtual v3, v4, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    goto -29h
+    invoke-interface v2, Landroid/database/Cursor;->close()V
+    invoke-virtual v1, Landroid/database/sqlite/SQLiteDatabase;->close()V
+    goto +2h
+    move-exception v1
+    new-instance v1, Lcom/deskline/MainActivity$3;
+    invoke-direct v1, v5, v0, Lcom/deskline/MainActivity$3;-><init>(Lcom/deskline/MainActivity; Ljava/lang/StringBuilder;)V
+    invoke-virtual v5, v1, Lcom/deskline/MainActivity;->runOnUiThread(Ljava/lang/Runnable;)V
+    return-void 
+  METHOD: sync ()V
+    iget-object v0, v3, Lcom/deskline/MainActivity;->status Landroid/widget/TextView;
+    const-string v1, "Syncing queue..."
+    invoke-virtual v0, v1, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
+    iget-object v0, v3, Lcom/deskline/MainActivity;->session Lcom/deskline/Session;
+    invoke-virtual v0, Lcom/deskline/Session;->baseUrl()Ljava/lang/String;
+    move-result-object v0
+    new-instance v1, Ljava/lang/Thread;
+    new-instance v2, Lcom/deskline/MainActivity$2;
+    invoke-direct v2, v3, v0, Lcom/deskline/MainActivity$2;-><init>(Lcom/deskline/MainActivity; Ljava/lang/String;)V
+    invoke-direct v1, v2, Ljava/lang/Thread;-><init>(Ljava/lang/Runnable;)V
+    invoke-virtual v1, Ljava/lang/Thread;->start()V
+    return-void 
+  METHOD: onCreate (Landroid/os/Bundle;)V
+    invoke-super v1, v2, Landroid/app/Activity;->onCreate(Landroid/os/Bundle;)V
+    new-instance v2, Lcom/deskline/Session;
+    invoke-direct v2, v1, Lcom/deskline/Session;-><init>(Landroid/content/Context;)V
+    iput-object v2, v1, Lcom/deskline/MainActivity;->session Lcom/deskline/Session;
+    const/high16 v2, 2130837504
+    invoke-virtual v1, v2, Lcom/deskline/MainActivity;->setContentView(I)V
+    const/high16 v2, 2130771968
+    invoke-virtual v1, v2, Lcom/deskline/MainActivity;->findViewById(I)Landroid/view/View;
+    move-result-object v2
+    check-cast v2, Landroid/widget/EditText;
+    iput-object v2, v1, Lcom/deskline/MainActivity;->serverField Landroid/widget/EditText;
+    const v2, 2130771969
+    invoke-virtual v1, v2, Lcom/deskline/MainActivity;->findViewById(I)Landroid/view/View;
+    move-result-object v2
+    check-cast v2, Landroid/widget/TextView;
+    iput-object v2, v1, Lcom/deskline/MainActivity;->status Landroid/widget/TextView;
+    const v2, 2130771971
+    invoke-virtual v1, v2, Lcom/deskline/MainActivity;->findViewById(I)Landroid/view/View;
+    move-result-object v2
+    check-cast v2, Landroid/widget/TextView;
+    iput-object v2, v1, Lcom/deskline/MainActivity;->tickets Landroid/widget/TextView;
+    iget-object v2, v1, Lcom/deskline/MainActivity;->serverField Landroid/widget/EditText;
+    iget-object v0, v1, Lcom/deskline/MainActivity;->session Lcom/deskline/Session;
+    invoke-virtual v0, Lcom/deskline/Session;->baseUrl()Ljava/lang/String;
+    move-result-object v0
+    invoke-virtual v2, v0, Landroid/widget/EditText;->setText(Ljava/lang/CharSequence;)V
+    const v2, 2130771970
+    invoke-virtual v1, v2, Lcom/deskline/MainActivity;->findViewById(I)Landroid/view/View;
+    move-result-object v2
+    new-instance v0, Lcom/deskline/MainActivity$1;
+    invoke-direct v0, v1, Lcom/deskline/MainActivity$1;-><init>(Lcom/deskline/MainActivity;)V
+    invoke-virtual v2, v0, Landroid/view/View;->setOnClickListener(Landroid/view/View$OnClickListener;)V
+    return-void 
+
+==================================================
+CLASS: Lcom/deskline/Session;
+  METHOD: <init> (Landroid/content/Context;)V
+    invoke-direct v2, Ljava/lang/Object;-><init>()V
+    const-string v0, "deskline"
+    const/4 v1, 0
+    invoke-virtual v3, v0, v1, Landroid/content/Context;->getSharedPreferences(Ljava/lang/String; I)Landroid/content/SharedPreferences;
+    move-result-object v3
+    iput-object v3, v2, Lcom/deskline/Session;->sp Landroid/content/SharedPreferences;
+    return-void 
+  METHOD: baseUrl ()Ljava/lang/String;
+    iget-object v0, v3, Lcom/deskline/Session;->sp Landroid/content/SharedPreferences;
+    const-string v1, "base_url"
+    const-string v2, "http://10.0.2.2:8080"
+    invoke-interface v0, v1, v2, Landroid/content/SharedPreferences;->getString(Ljava/lang/String; Ljava/lang/String;)Ljava/lang/String;
+    move-result-object v0
+    return-object v0
+  METHOD: deviceId ()Ljava/lang/String;
+    iget-object v0, v4, Lcom/deskline/Session;->sp Landroid/content/SharedPreferences;
+    const/4 v1, 0
+    const-string v2, "device_id"
+    invoke-interface v0, v2, v1, Landroid/content/SharedPreferences;->getString(Ljava/lang/String; Ljava/lang/String;)Ljava/lang/String;
+    move-result-object v0
+    if-nez v0, +02ah
+    invoke-static Ljava/util/UUID;->randomUUID()Ljava/util/UUID;
+    move-result-object v0
+    invoke-virtual v0, Ljava/util/UUID;->toString()Ljava/lang/String;
+    move-result-object v0
+    new-instance v1, Ljava/lang/StringBuilder;
+    invoke-direct v1, Ljava/lang/StringBuilder;-><init>()V
+    const-string v3, "dsk-"
+    invoke-virtual v1, v3, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v1
+    invoke-virtual v1, v0, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v0
+    invoke-virtual v0, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object v0
+    iget-object v1, v4, Lcom/deskline/Session;->sp Landroid/content/SharedPreferences;
+    invoke-interface v1, Landroid/content/SharedPreferences;->edit()Landroid/content/SharedPreferences$Editor;
+    move-result-object v1
+    invoke-interface v1, v2, v0, Landroid/content/SharedPreferences$Editor;->putString(Ljava/lang/String; Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
+    move-result-object v1
+    invoke-interface v1, Landroid/content/SharedPreferences$Editor;->apply()V
+    return-object v0
+  METHOD: setBaseUrl (Ljava/lang/String;)V
+    nop 
+    const-string v0, "/"
+    invoke-virtual v3, v0, Ljava/lang/String;->endsWith(Ljava/lang/String;)Z
+    move-result v0
+    if-eqz v0, +00eh
+    invoke-virtual v3, Ljava/lang/String;->length()I
+    move-result v0
+    add-int/lit8 v0, v0, -1
+    const/4 v1, 0
+    invoke-virtual v3, v1, v0, Ljava/lang/String;->substring(I I)Ljava/lang/String;
+    move-result-object v3
+    goto -13h
+    iget-object v0, v2, Lcom/deskline/Session;->sp Landroid/content/SharedPreferences;
+    invoke-interface v0, Landroid/content/SharedPreferences;->edit()Landroid/content/SharedPreferences$Editor;
+    move-result-object v0
+    const-string v1, "base_url"
+    invoke-interface v0, v1, v3, Landroid/content/SharedPreferences$Editor;->putString(Ljava/lang/String; Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
+    move-result-object v3
+    invoke-interface v3, Landroid/content/SharedPreferences$Editor;->apply()V
+    return-void 
+  METHOD: setToken (Ljava/lang/String;)V
+    iget-object v0, v2, Lcom/deskline/Session;->sp Landroid/content/SharedPreferences;
+    invoke-interface v0, Landroid/content/SharedPreferences;->edit()Landroid/content/SharedPreferences$Editor;
+    move-result-object v0
+    const-string v1, "token"
+    invoke-interface v0, v1, v3, Landroid/content/SharedPreferences$Editor;->putString(Ljava/lang/String; Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
+    move-result-object v3
+    invoke-interface v3, Landroid/content/SharedPreferences$Editor;->apply()V
+    return-void 
+  METHOD: token ()Ljava/lang/String;
+    iget-object v0, v3, Lcom/deskline/Session;->sp Landroid/content/SharedPreferences;
+    const-string v1, "token"
+    const/4 v2, 0
+    invoke-interface v0, v1, v2, Landroid/content/SharedPreferences;->getString(Ljava/lang/String; Ljava/lang/String;)Ljava/lang/String;
+    move-result-object v0
+    return-object v0
+
+==================================================
+CLASS: Lcom/deskline/TicketProvider;
+  METHOD: <init> ()V
+    invoke-direct v0, Landroid/content/ContentProvider;-><init>()V
+    return-void 
+  METHOD: delete (Landroid/net/Uri; Ljava/lang/String; [Ljava/lang/String;)I
+    const/4 v1, 0
+    return v1
+  METHOD: getType (Landroid/net/Uri;)Ljava/lang/String;
+    const-string v1, "vnd.android.cursor.dir/vnd.com.deskline.tickets"
+    return-object v1
+  METHOD: insert (Landroid/net/Uri; Landroid/content/ContentValues;)Landroid/net/Uri;
+    const/4 v1, 0
+    return-object v1
+  METHOD: onCreate ()Z
+    const/4 v0, 1
+    return v0
+  METHOD: query (Landroid/net/Uri; [Ljava/lang/String; Ljava/lang/String; [Ljava/lang/String; Ljava/lang/String;)Landroid/database/Cursor;
+    new-instance v1, Lcom/deskline/DeskDb;
+    invoke-virtual v0, Lcom/deskline/TicketProvider;->getContext()Landroid/content/Context;
+    move-result-object v2
+    invoke-direct v1, v2, Lcom/deskline/DeskDb;-><init>(Landroid/content/Context;)V
+    invoke-virtual v1, Lcom/deskline/DeskDb;->getReadableDatabase()Landroid/database/sqlite/SQLiteDatabase;
+    move-result-object v1
+    nop 
+    const-string v2, "SELECT id, subject, body FROM tickets"
+    if-eqz v3, +023h
+    invoke-virtual v3, Ljava/lang/String;->trim()Ljava/lang/String;
+    move-result-object v4
+    invoke-virtual v4, Ljava/lang/String;->length()I
+    move-result v4
+    if-lez v4, +019h
+    new-instance v4, Ljava/lang/StringBuilder;
+    invoke-direct v4, Ljava/lang/StringBuilder;-><init>()V
+    invoke-virtual v4, v2, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v2
+    const-string v4, " WHERE "
+    invoke-virtual v2, v4, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v2
+    invoke-virtual v2, v3, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v2
+    invoke-virtual v2, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object v2
+    if-eqz v5, +023h
+    invoke-virtual v5, Ljava/lang/String;->trim()Ljava/lang/String;
+    move-result-object v3
+    invoke-virtual v3, Ljava/lang/String;->length()I
+    move-result v3
+    if-lez v3, +019h
+    new-instance v3, Ljava/lang/StringBuilder;
+    invoke-direct v3, Ljava/lang/StringBuilder;-><init>()V
+    invoke-virtual v3, v2, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v2
+    const-string v3, " ORDER BY "
+    invoke-virtual v2, v3, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v2
+    invoke-virtual v2, v5, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v2
+    invoke-virtual v2, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object v2
+    const/4 v3, 0
+    invoke-virtual v1, v2, v3, Landroid/database/sqlite/SQLiteDatabase;->rawQuery(Ljava/lang/String; [Ljava/lang/String;)Landroid/database/Cursor;
+    move-result-object v1
+    return-object v1
+  METHOD: update (Landroid/net/Uri; Landroid/content/ContentValues; Ljava/lang/String; [Ljava/lang/String;)I
+    const/4 v1, 0
+    return v1

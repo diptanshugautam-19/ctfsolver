@@ -1,0 +1,227 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', monospace;
+    background: #0a0a0a;
+    color: #e0e0e0;
+    line-height: 1.6;
+    padding: 20px;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: #1a1a1a;
+    padding: 40px;
+    border: 2px solid #333;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+    border-bottom: 2px solid #444;
+    padding-bottom: 20px;
+}
+
+h1 {
+    font-size: 2.5em;
+    color: #ffd700;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+}
+
+h2 {
+    font-size: 1.5em;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.instructions {
+    background: #0f0f0f;
+    border-left: 4px solid #ffd700;
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+.instructions h3 {
+    color: #ffd700;
+    margin-bottom: 15px;
+}
+
+.instructions ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.instructions li {
+    padding: 8px 0;
+    padding-left: 20px;
+    position: relative;
+}
+
+.instructions li:before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: #ffd700;
+}
+
+.instructions code {
+    background: #2a2a2a;
+    padding: 2px 8px;
+    border-radius: 3px;
+    color: #ffd700;
+}
+
+.question {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #0f0f0f;
+    border-left: 3px solid #444;
+}
+
+.qnum {
+    display: block;
+    color: #ffd700;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+    color: #ccc;
+}
+
+label code {
+    background: #2a2a2a;
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: #ffd700;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    color: #e0e0e0;
+    font-family: 'Courier New', monospace;
+    font-size: 1em;
+    margin-top: 8px;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: #ffd700;
+    background: #1f1f1f;
+}
+
+.char-hint {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.85em;
+    color: #666;
+    font-style: italic;
+}
+
+button[type="submit"] {
+    width: 100%;
+    padding: 15px;
+    background: #ffd700;
+    color: #0a0a0a;
+    border: none;
+    font-family: 'Courier New', monospace;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.3s;
+}
+
+button[type="submit"]:hover {
+    background: #ffed4e;
+    transform: translateY(-2px);
+}
+
+button[type="submit"]:active {
+    transform: translateY(0);
+}
+
+.result {
+    margin-top: 30px;
+    padding: 20px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.result.success {
+    background: #1a3a1a;
+    border: 2px solid #2ecc71;
+    color: #2ecc71;
+}
+
+.result.error {
+    background: #3a1a1a;
+    border: 2px solid #e74c3c;
+    color: #e74c3c;
+}
+
+.flag {
+    margin-top: 20px;
+    padding: 25px;
+    background: #0f0f0f;
+    border: 2px solid #ffd700;
+    text-align: center;
+}
+
+.flag h3 {
+    color: #ffd700;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+}
+
+.flag code {
+    display: block;
+    background: #2a2a2a;
+    padding: 15px;
+    color: #2ecc71;
+    font-size: 1.1em;
+    word-break: break-all;
+    border-radius: 4px;
+}
+
+.hidden {
+    display: none;
+}
+
+.question.correct {
+    border-left-color: #2ecc71;
+}
+
+.question.incorrect {
+    border-left-color: #e74c3c;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+    
+    h1 {
+        font-size: 2em;
+    }
+    
+    h2 {
+        font-size: 1.2em;
+    }
+}

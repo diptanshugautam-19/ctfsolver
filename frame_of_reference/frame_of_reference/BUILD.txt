@@ -1,0 +1,8 @@
+attest, the streaming notary service.
+
+Base image: ubuntu:24.04 (digest sha256:80dd3c3b9c6cecb9f1667e9290b3bc61b78c2678c02cbdae5f0fea92cc6734ab)
+Compiler: clang-18 (Ubuntu package clang-18), libstdc++-14
+Build: clang++-18 -std=c++20 -O2 -fno-strict-aliasing -fPIE -pie -Wl,-z,relro,-z,now -o attest attest.cpp
+Serve: socat TCP-LISTEN:1337,reuseaddr,fork EXEC:./attest
+
+The provided attest binary is the exact artifact served on the remote.
