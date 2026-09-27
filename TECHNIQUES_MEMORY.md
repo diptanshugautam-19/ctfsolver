@@ -365,3 +365,35 @@ ew File(baseDir, path)) without canonicalization.
      - Branch across masked bit combinations to enumerate the exact $2^k$ input key candidates in milliseconds.
   4. **Public Key Disambiguation:** Concat candidate fragments in valid chain permutations and test against the instance's public key (e.g. Ed25519 scalar multiplication $A = a \cdot B$). An exact 256-bit public key match uniquely resolves the true seed and eliminates all ambiguous masking bits.
    5. **Instance Handout Synchronization:** In distributed cloud CTFs where challenge instances initialize a fresh keypair on container start, verify if the live service serves its synchronized shard archive (e.g. /handout.tar.gz) directly over HTTP before attempting attestation with stale handout keys.
+
+---
+
+## 25. Attestation Core Graph Traversal & Decoupled ARX Inversion
+* **Challenge Paradigm:** Dynamic VM State Graph with Cryptographic Signature Verification (`countersign`).
+* **Mechanism & Pitfall:**
+  - The runtime executes a DAG of bytecode basic blocks connected by signed edges. Each edge transition requires a valid MAC tag (e.g. 6-byte SipHash-2-4 over `src || dst || cond || salt`).
+  - The graph image returned by diagnostic commands (`GET`) contains dummy/decoy edges alongside authentic edges. An attestation oracle (`MINT`) computes MAC tags on arbitrary input buffers <= 16 bytes.
+  - Querying `MINT` across all edge descriptors deterministically eliminates decoy edges, reducing a deceptive graph into a clean, 12-round diamond ladder.
+* **Analytical Inversion Pipeline:**
+  1. **Decoupled State Channels:** Observe register dependencies across the round functions. In the 12 rounds, the primary ARX permutation operates solely on (r0, r1, r2, r3) without reading (r4, r5), while intermediate branching nodes only modify (r4, r5).
+  2. **Backward Permutation Step:** Because (r0..r3) never branches or depends on other registers, the 12 ARX rounds are strictly bijective. Invert the ARX operations backward from the final target assertions (T0..T3) to recover initial (r0..r3) in O(1) operations:
+     r2 = r2 ^ imm2; r0 = r0 - imm1; r1 = r1 ^ r3; r3 = (r3 >>> rot2) - r2; r2 = r2 ^ r0; r0 = (r0 >>> rot1) - r1
+  3. **Exact Path Reconstruction:** Simulate (r0..r3) forward from initial state to evaluate all 12 branch bits deterministically.
+  4. **Secondary Channel Inversion:** Trace the selected intermediate nodes backward to invert (r4, r5) from (T4, T5) using the inverse operations:
+     r5 = (r5 >>> rot_r5) - r4; r4 = r4 ^ imm_xor
+  5. Concatenate the recovered 32-bit words into the 24-byte input to steer execution directly to the flag emission block.
+
+---
+
+## 26. Bare-Metal x86 BIOS ROM Reversing & Multi-Plane Matrix Reconstruction
+* **Challenge Paradigm:** Raw x86 MBR / Real-Mode BIOS Display Controller (`afterglow`).
+* **Mechanism & Pitfall:**
+  - Firmware boots directly from MBR (`0x7C00`), reads payload into `0x8000` via `INT 13h, AH=02h`, sets VGA Mode `13h` (320x200 256 colors), and displays a dummy factory calibration pattern while idling for service code input.
+  - Entering the correct 32-bit service code triggers decryption of 8 bitplanes that composite a 256x32 matrix display.
+* **Analytical Reconstruction Pipeline:**
+  1. **Seed & Service Code Extraction:** Identify the ROM offset (e.g. `0x83d6` in payload) holding the 32-bit PRNG seed. Trace arithmetic transformations (XOR mixing, Murmur-style multiplicative constants `0x9e3779b1`, `0x85ebca77`) to derive the service code and initial LFSR state.
+  2. **LFSR State Machine:** Accurately replicate 16-bit Galois/Fibonacci LFSR step logic (b15 ^ b13 ^ b12 ^ b10) to regenerate the plane permutation (`perm[0..7]`), bit inversion flags, and (dx, dy) coordinate shifts.
+     - *Critical Pitfall:* Maintain exact function call order (e.g. interleaved dx then dy calls in loop body vs separate array passes) to ensure PRNG alignment.
+  3. **LCG Keystream Decryption:** Emulate the per-plane Linear Congruential Generator (state = state * 0x19660d + 0x3c6ef35f) seeded with ((bp + 1) * 0x1000193) ^ service_code to decrypt the raw 1024-byte plane buffers.
+  4. **Spatial Matrix Reassembly:** Map each pixel (x, y) through cyclic shift offsets: xs = (x + dx) % 256, ys = (y + dy) % 32. Accumulate bits into the final 8-bit grayscale frame buffer: pixel |= (bit << perm[bp]).
+  5. **Visual Recovery:** Export the decoded buffer directly to an 8-bit grayscale image (`.png` / `.pbm`) to render the service tag flag text with 100% optical clarity.

@@ -21,3 +21,5 @@
 {"timestamp": "2026-09-26T21:05:00Z", "challenge": "vouchsafe", "category": "web", "tool": "solutions/vouchsafe/solve.py", "flag": "H7CTF{13af9631-e917-4a88-bc14-2e163208f120}", "status": "solved", "elapsed_seconds": 1.2}
 {"timestamp": "2026-09-26T21:15:00Z", "challenge": "perpguard", "category": "web3", "tool": "solutions/perpguard/solve.py", "flag": "H7CTF{a15a8281-06b7-43e7-908c-60da6e0ac849}", "status": "solved", "elapsed_seconds": 1.8}
 {"timestamp": "2026-09-26T22:50:20Z", "challenge": "kintsugi_vault", "category": "rev", "tool": "solutions/kintsugi_vault/solve.py", "flag": "H7CTF{9bad456f-6908-413e-bfa8-5fb33a7bcdf3}", "status": "solved", "elapsed_seconds": 3.5}
+{"timestamp": "2026-09-27T08:08:31.177131+00:00", "challenge": "countersign", "category": "rev", "tool": "solutions/countersign/solve.py", "flag": "H7CTF{81d2ac39-bb56-43fe-9777-e16358efbb74}", "status": "solved", "elapsed_seconds": 7.5}
+{"timestamp": "2026-09-27T08:08:31.177142+00:00", "challenge": "afterglow", "category": "rev", "tool": "solutions/afterglow/solve.py", "flag": "H7CTF{ad9e53f3-904e-4662-b201-c97dfc094a24}", "status": "solved", "elapsed_seconds": 1.0}
