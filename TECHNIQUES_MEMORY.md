@@ -397,3 +397,23 @@ ew File(baseDir, path)) without canonicalization.
   3. **LCG Keystream Decryption:** Emulate the per-plane Linear Congruential Generator (state = state * 0x19660d + 0x3c6ef35f) seeded with ((bp + 1) * 0x1000193) ^ service_code to decrypt the raw 1024-byte plane buffers.
   4. **Spatial Matrix Reassembly:** Map each pixel (x, y) through cyclic shift offsets: xs = (x + dx) % 256, ys = (y + dy) % 32. Accumulate bits into the final 8-bit grayscale frame buffer: pixel |= (bit << perm[bp]).
   5. **Visual Recovery:** Export the decoded buffer directly to an 8-bit grayscale image (`.png` / `.pbm`) to render the service tag flag text with 100% optical clarity.
+---
+
+## 27. Exposed Git Object Carving & Session JWT Forgery for Role Escalation
+* **Challenge Paradigm:** Production web deployment with exposed source repository (`worldoutter`).
+* **Mechanism & Pitfall:**
+  - Web servers inadvertently serving the root directory often expose `/.git/`. Even when directory listing is disabled (HTTP 403 / 404 on `/.git/`), raw Git objects (`/.git/objects/xx/yy...`), HEAD (`/.git/HEAD`), and refs (`/.git/refs/heads/<branch>`) remain directly downloadable.
+  - Session management using signed JSON Web Tokens (e.g. HS256) relies entirely on the confidentiality of the signing secret (`JWT_SECRET`).
+* **Extraction & Exploitation Pipeline:**
+  1. **Git Object Traversal:**
+     - Query `/.git/HEAD` to resolve the active branch (e.g. `ref: refs/heads/main`).
+     - Query `/.git/refs/heads/main` to retrieve the latest commit SHA.
+     - Fetch `/.git/objects/<sha[:2]>/<sha[2:]>`, decompress with zlib, and extract the tree SHA.
+     - Recursively parse the Git tree entries `[mode] [name]\0[20-byte-sha]` to locate configuration files (e.g. `config/secret.js`) and server routing logic (`server.js`).
+  2. **Secret Extraction & Session Forgery:**
+     - Extract `JWT_SECRET` directly from uncompressed blob objects.
+     - Inspect `server.js` role validation logic (`req.claims.role === 'commissioner'`).
+     - Construct a forged JWT payload with elevated privilege (`{"user":"you","team":"...","role":"commissioner"}`) and sign with HMAC-SHA256 using the recovered secret.
+  3. **Privileged Access:**
+     - Set the forged token in the session cookie (e.g. `wo_session`) and request the privileged console (`/commissioner`) to extract the flag.
+
