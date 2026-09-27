@@ -44,7 +44,7 @@ def extract_metadata(file_path: Path, text: str) -> Dict[str, str]:
 
     # Infer category from path
     path_lower = str(file_path).lower()
-    for cat in ["crypto", "pwn", "rev", "web", "forensics", "misc", "osint", "dld", "hardware", "iot", "rf", "radio", "ics", "firmware"]:
+    for cat in ["osint", "crypto", "pwn", "rev", "web", "forensics", "misc", "dld", "hardware", "iot", "rf", "radio", "ics", "firmware"]:
         if f"/{cat}" in path_lower or f"\\{cat}" in path_lower or cat in path_lower:
             category = "hardware" if cat in ["rf", "radio", "ics", "firmware", "iot"] else cat
             break
@@ -72,7 +72,7 @@ def index_directory(target_dir: Path, db_path: Path = DB_PATH, clear_existing: b
         conn.commit()
 
     count = 0
-    extensions = {".md", ".txt", ".rst", ".py", ".sol", ".pdf", ".ino", ".c", ".cpp", ".h", ".v", ".sv", ".vhd"}
+    extensions = {".md", ".txt", ".rst", ".py", ".sol", ".pdf", ".docx", ".json", ".html", ".php", ".ino", ".c", ".cpp", ".h", ".v", ".sv", ".vhd"}
 
     for root, _, files in os.walk(target_dir):
         for f in files:
@@ -84,6 +84,17 @@ def index_directory(target_dir: Path, db_path: Path = DB_PATH, clear_existing: b
                             import pypdf
                             reader = pypdf.PdfReader(str(p))
                             content = "\n".join(page.extract_text() or "" for page in reader.pages)
+                        except Exception:
+                            continue
+                    elif p.suffix.lower() == ".docx":
+                        try:
+                            import zipfile
+                            import xml.etree.ElementTree as ET
+                            with zipfile.ZipFile(str(p)) as z:
+                                xml_content = z.read('word/document.xml')
+                                tree = ET.fromstring(xml_content)
+                                text_parts = [elem.text or '' for elem in tree.iter() if elem.tag.endswith('}t')]
+                                content = "".join(text_parts)
                         except Exception:
                             continue
                     else:
